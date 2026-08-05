@@ -49,7 +49,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen pb-12 relative overflow-x-hidden">
 
-    <!-- PDF Summary Template (Hidden, strictly for generating PDF) -->
+    <!-- PDF Summary Template (Hidden, will be brought to front during export) -->
     <div id="pdf-summary" style="display:none;"></div>
 
     <!-- Main Content Wrapper -->
@@ -77,10 +77,10 @@
             
             <div class="xl:col-span-4 space-y-5">
 
-                <!-- 0. ข้อมูลส่วนตัว & Consent -->
+                <!-- 0. ข้อมูล -->
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
                     <h2 class="text-base font-bold text-slate-700 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-address-card text-blue-500"></i> ข้อมูลส่วนตัว
+                        <i class="fa-solid fa-address-card text-blue-500"></i> ข้อมูล
                     </h2>
                     <div class="space-y-4">
                         <div>
@@ -91,20 +91,20 @@
                             <label class="block text-xs font-semibold text-slate-600 mb-1">เบอร์โทรศัพท์</label>
                             <input type="text" id="inp-phone" placeholder="08X-XXX-XXXX" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-slate-700 focus:outline-none focus:border-indigo-500 transition">
                         </div>
-
-                        <!-- เพิ่มส่วน Consent -->
-                        <div class="border-t border-slate-200 pt-3">
-                            <p class="text-[11px] text-slate-600 leading-relaxed font-medium mb-2">
+                        
+                        <!-- การขอความยินยอม (Consent) -->
+                        <div class="border-t border-slate-200 pt-4 mt-2">
+                            <p class="text-[11px] text-slate-600 mb-2 leading-relaxed">
                                 บริษัทขอใช้ข้อมูลที่ระบุไว้ข้างต้น สำหรับติดต่อเพื่อให้ข้อมูลและบริการของบริษัทแก่ท่าน ทั้งนี้ บริษัทขอติดต่อท่าน เพื่อนำเสนอผลิตภัณฑ์ด้านการลงทุนแก่ท่าน
                             </p>
-                            <div class="flex items-center gap-6 mt-2">
-                                <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="marketingConsent" value="ยินยอม" class="text-indigo-600 focus:ring-indigo-500" checked>
-                                    <span class="ml-2 text-xs font-bold text-emerald-700">ยินยอม</span>
+                            <div class="flex gap-5">
+                                <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer hover:text-indigo-600 transition">
+                                    <input type="radio" name="marketingConsent" value="ยินยอม" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500" checked>
+                                    ยินยอม
                                 </label>
-                                <label class="inline-flex items-center cursor-pointer">
-                                    <input type="radio" name="marketingConsent" value="ไม่ยินยอม" class="text-indigo-600 focus:ring-indigo-500">
-                                    <span class="ml-2 text-xs font-semibold text-slate-600">ไม่ยินยอม</span>
+                                <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer hover:text-red-600 transition">
+                                    <input type="radio" name="marketingConsent" value="ไม่ยินยอม" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                                    ไม่ยินยอม
                                 </label>
                             </div>
                         </div>
@@ -340,7 +340,7 @@
         <footer class="mt-12 pt-6 border-t border-slate-300 text-[10px] text-slate-500 leading-relaxed max-w-5xl mx-auto">
             <h5 class="font-bold text-slate-600 mb-2">คำเตือนและความยินยอมในการใช้งาน</h5>
             <p class="mb-2"><strong class="text-slate-600">คำเตือนเรื่องความเสี่ยงและการลงทุน (ตามหลัก ก.ล.ต.):</strong> ผลการจำลองการลงทุน ผลตอบแทนในอดีต หรือการประมวลผลด้วยแบบจำลอง Monte Carlo มิได้เป็นสิ่งยืนยันถึงผลตอบแทนในอนาคต เครื่องมือนี้เป็นเพียงแบบจำลองเพื่อช่วยในการวางแผนและประเมินความเป็นไปได้เบื้องต้นเท่านั้น มิใช่คำแนะนำทางการเงิน การลงทุน หรือการเชิญชวนให้ซื้อขายผลิตภัณฑ์ทางการเงินใดๆ ผู้ลงทุนควรทำความเข้าใจลักษณะสินค้า เงื่อนไขผลตอบแทน และความเสี่ยง ก่อนตัดสินใจลงทุน</p>
-            <p><strong class="text-slate-600">ข้อตกลงเรื่องการเก็บ รวบรวม ใช้ และเปิดเผยข้อมูลส่วนบุคคลเพื่อการตลาด (PDPA & Marketing Consent):</strong> ข้อมูลที่ท่านกรอกในระบบ (เช่น อายุ เงินออม ผลตอบแทนที่คาดหวัง) อาจถูกบันทึก และนำไปวิเคราะห์ หรือจัดเก็บโดยบริษัท เพื่อพัฒนาบริการ นำเสนอสิทธิประโยชน์ ข่าวสารทางการเงิน และข้อเสนอทางการตลาดที่เหมาะสมกับเป้าหมายของท่าน บริษัทจะรักษาข้อมูลส่วนบุคคลของท่านและปฏิบัติตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (“กฎหมายคุ้มครองข้อมูลส่วนบุคคล”) อย่างเคร่งครัดโดยท่านสามารถอ่านเพิ่มเติมเพื่อเข้าใจถึงวิธีการที่บริษัทจัดการเก็บ รวบรวม ใช้ และเปิดเผยข้อมูลส่วนบุคคลและสิทธิของเจ้าของข้อมูลตามกฎหมายคุ้มครองข้อมูลส่วนบุคคลได้ที่ <a href="https://www.asiaplus.co.th/api/image?imageUrl=uploads/Privacy_Policy_customers_TH.pdf" target="_blank" class="text-indigo-600 font-semibold underline hover:text-indigo-800">[ประกาศความเป็นส่วนตัว (Privacy Notice)]</a> ของบริษัท</p>
+            <p><strong class="text-slate-600">ข้อตกลงเรื่องการเก็บ รวบรวม ใช้ และเปิดเผยข้อมูลส่วนบุคคลเพื่อการตลาด (PDPA & Marketing Consent):</strong> ข้อมูลที่ท่านกรอกในระบบ (เช่น อายุ เงินออม ผลตอบแทนที่คาดหวัง) อาจถูกบันทึก และนำไปวิเคราะห์ หรือจัดเก็บโดยบริษัท เพื่อพัฒนาบริการ นำเสนอสิทธิประโยชน์ ข่าวสารทางการเงิน และข้อเสนอทางการตลาดที่เหมาะสมกับเป้าหมายของท่าน บริษัทจะรักษาข้อมูลส่วนบุคคลของท่านและปฏิบัติตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (“กฎหมายคุ้มครองข้อมูลส่วนบุคคล”) อย่างเคร่งครัดโดยท่านสามารถอ่านเพิ่มเติมเพื่อเข้าใจถึงวิธีการที่บริษัทจัดการเก็บ รวบรวม ใช้ และเปิดเผยข้อมูลส่วนบุคคลและสิทธิของเจ้าของข้อมูลตามกฎหมายคุ้มครองข้อมูลส่วนบุคคลได้ที่ <a href="https://www.asiaplus.co.th/api/image?imageUrl=uploads/Privacy_Policy_customers_TH.pdf" target="_blank" class="text-indigo-600 hover:text-indigo-800 underline">[ประกาศความเป็นส่วนตัว (Privacy Notice)]</a> ของบริษัท</p>
         </footer>
     </div>
 
@@ -355,6 +355,7 @@
         let debounceTimer;
         let appState = { probSuccess: 0, targetWealth: 0, projectedWealth: 0, simData: null };
 
+        // --- Number Formatting Logic ---
         function formatNumberWithCommas(value) {
             if(!value) return "0";
             let val = value.toString().replace(/,/g, '').replace(/[^\d.]/g, '');
@@ -380,6 +381,7 @@
             });
         });
 
+        // --- Notification Toast ---
         function showToast(msg, type = 'success') {
             const existing = document.getElementById("toast-notif");
             if(existing) existing.remove();
@@ -393,6 +395,7 @@
             setTimeout(() => { if(document.body.contains(toast)) toast.remove(); }, 3000);
         }
 
+        // --- Math Engine ---
         function randomNormal(mean = 0, stdDev = 1) {
             let u = 0, v = 0;
             while(u === 0) u = Math.random(); 
@@ -400,6 +403,7 @@
             return (Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v)) * stdDev + mean;
         }
 
+        // --- Validation ---
         function validateParams(p) {
             if (p.retireAge <= p.currentAge) {
                 showToast("⚠️ อายุเกษียณต้องมากกว่าอายุปัจจุบัน", "error");
@@ -416,6 +420,7 @@
             return true;
         }
 
+        // --- Core Simulation Engine ---
         function runMonteCarlo(params, numPaths = 1000) {
             const currentAge = parseInt(params.currentAge);
             const retireAge = parseInt(params.retireAge);
@@ -435,9 +440,10 @@
             const totalMonths = (endAge - currentAge) * 12;
             const retireMonth = (retireAge - currentAge) * 12;
 
+            // แก้ไขสมการเงินเฟ้อ: ทบต้นให้ถึงวันเกษียณ เพื่อหาเป้าหมาย
             let expAtRetire = expenseCurr * Math.pow(1 + infMonthly, retireMonth);
             let netExpAtRetire = Math.max(0, expAtRetire - otherIncome);
-            const targetWealthLumpSum = netExpAtRetire * 12 * (endAge - retireAge);
+            const targetWealthLumpSum = netExpAtRetire * 12 * (endAge - retireAge); // แบบคร่าวๆ (Lump sum requirement)
 
             let pathsByYear = Array.from({length: (endAge - currentAge) + 1}, () => []);
             let successfulPaths = 0;
@@ -455,8 +461,9 @@
                     }
 
                     if (m <= retireMonth) {
-                        wealth += dca;
+                        wealth += dca; // สะสม
                     } else {
+                        // เกษียณแล้ว: เริ่มคำนวณเงินเฟ้อต่อจากวันเกษียณ
                         const monthsAfterRetire = m - retireMonth;
                         let currentWd = expAtRetire * Math.pow(1 + infMonthly, monthsAfterRetire);
                         let netWd = currentWd - otherIncome;
@@ -465,7 +472,7 @@
                             if(wealth >= netWd) wealth -= netWd;
                             else wealth = 0;
                         } else {
-                            wealth += Math.abs(netWd);
+                            wealth += Math.abs(netWd); // รายได้อื่นพอใช้ เหลือทบเข้าพอร์ต
                         }
                     }
 
@@ -501,6 +508,7 @@
             };
         }
 
+        // --- Input Getters ---
         function getUIParams() {
             let riskVal = 2;
             document.querySelectorAll('input[name="riskProfile"]').forEach(r => { if(r.checked) riskVal = r.value; });
@@ -517,6 +525,7 @@
             };
         }
 
+        // --- What-If Scenarios Logic ---
         function calculateWhatIfScenarios() {
             const baseParams = getUIParams();
             if(!validateParams(baseParams)) return;
@@ -594,6 +603,7 @@
             showToast("✅ อัปเดตแผนการลงทุนเรียบร้อยแล้ว!");
         }
 
+        // --- Core UI Update ---
         function updateUIAndChart() {
             const params = getUIParams();
             if (!validateParams(params)) return;
@@ -653,7 +663,36 @@
             const dTarget = Array(res.labels.length).fill(res.targetWealth);
 
             const medianAtEnd = res.trajectory[res.trajectory.length - 1].median;
-            const yMaxCap = Math.max(res.targetWealth, medianAtEnd) * 1.5;
+            
+            // แก้ไขข้อ 2: ปัดเศษขึ้นในระดับหลักล้าน ป้องกันตัวเลขทศนิยมยาวลอยขึ้นมาบนสุดของแกน Y
+            const rawMax = Math.max(res.targetWealth, medianAtEnd) * 1.5;
+            const yMaxCap = Math.ceil(rawMax / 1000000) * 1000000;
+
+            // แก้ไขข้อ 1: Plugin วาดเส้นประแกนตั้ง ณ อายุเกษียณ
+            const retirementLinePlugin = {
+                id: 'retirementLine',
+                beforeDraw: (chart) => {
+                    if (res.retireIdx !== undefined && res.retireIdx >= 0 && chart.getDatasetMeta(0).data[res.retireIdx]) {
+                        const { ctx, chartArea: { top, bottom } } = chart;
+                        const xPos = chart.getDatasetMeta(0).data[res.retireIdx].x;
+
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.setLineDash([4, 4]); // กำหนดเป็นเส้นประ
+                        ctx.lineWidth = 1.5;
+                        ctx.strokeStyle = 'rgba(100, 116, 139, 0.4)'; // สีเทาโปร่งแสง (จางกว่าเส้นเป้าหมาย)
+                        ctx.moveTo(xPos, top);
+                        ctx.lineTo(xPos, bottom);
+                        ctx.stroke();
+
+                        // เขียนข้อความกำกับเส้น
+                        ctx.fillStyle = 'rgba(100, 116, 139, 0.7)';
+                        ctx.font = '10px Sarabun, sans-serif';
+                        ctx.fillText('เกษียณอายุ', xPos + 4, top + 12);
+                        ctx.restore();
+                    }
+                }
+            };
 
             chartInstance = new Chart(ctx, {
                 type: 'line',
@@ -666,6 +705,7 @@
                         { label: 'เป้าหมายเงินก้อน', data: dTarget, borderColor: '#f59e0b', backgroundColor: 'transparent', fill: false, borderWidth: 2, borderDash: [5, 5], pointRadius: 0, order: -1 }
                     ]
                 },
+                plugins: [retirementLinePlugin],
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false },
@@ -683,7 +723,11 @@
                     scales: {
                         y: { 
                             max: yMaxCap,
-                            ticks: {color:'#6b7280', font: { family: 'Sarabun', size: 10 }, callback:(v)=>(v/1000000)+'M'}, 
+                            ticks: {
+                                color:'#6b7280', 
+                                font: { family: 'Sarabun', size: 10 }, 
+                                callback: (v) => Math.round(v / 1000000) + 'M' // แก้ไขข้อ 2: บังคับให้เป็นจำนวนเต็มเสมอ
+                            }, 
                             grid: {color:'#e5e7eb'} 
                         },
                         x: { ticks:{color:'#6b7280', font: { family: 'Sarabun', size: 10 }}, grid:{display:false} }
@@ -697,25 +741,26 @@
             debounceTimer = setTimeout(updateUIAndChart, 300);
         }
 
+        // --- Google Sheets & Export PDF Logic ---
         function submitToGoogleSheet() {
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbxu-AgH4VoHrf3CzH2SOJ8ncmxDCAXpwYkQptqHU2lwdMTF4A2fam0JvlCMESLn9HL3_w/exec'; 
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxaesT7qPIpk0XwfQ0gkfngehg-iGheURd-FaPPeZBvPW3fbFLhYLHoZtb1b_moM70Q/exec'; 
 
             let riskProfileLabel = '-';
             document.querySelectorAll('input[name="riskProfile"]').forEach(r => { 
                 if(r.checked) riskProfileLabel = RISK_PROFILES[r.value].name; 
             });
 
-            // ดึงค่า Marketing Consent (ยินยอม / ไม่ยินยอม)
-            let consentVal = 'ยินยอม';
+            // ตรวจสอบค่าความยินยอมจาก Radio Button
+            let marketingConsentVal = 'ยินยอม';
             document.querySelectorAll('input[name="marketingConsent"]').forEach(r => {
-                if(r.checked) consentVal = r.value;
+                if(r.checked) marketingConsentVal = r.value;
             });
 
             const formData = new FormData();
             formData.append('Timestamp', new Date().toLocaleString('th-TH'));
             formData.append('Name', document.getElementById('inp-name').value || 'ไม่ระบุ');
             formData.append('Phone', document.getElementById('inp-phone').value || 'ไม่ระบุ');
-            formData.append('MarketingConsent', consentVal); // ส่งค่า Consent
+            formData.append('MarketingConsent', marketingConsentVal); // ส่งค่า Consent เข้า Google Sheet
             formData.append('CurrentAge', getNumberFromInput('inp-current-age'));
             formData.append('RetireAge', getNumberFromInput('inp-retire-age'));
             formData.append('EndAge', document.getElementById('inp-end-age').value);
@@ -759,95 +804,96 @@
             const canvas = document.getElementById('portfolioChart');
             if (canvas) {
                 const imgData = canvas.toDataURL('image/png', 1.0);
-                chartImgHtml = `<img src="${imgData}" style="width:100%; max-width:680px; height:auto; display:block; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px;">`;
+                // แก้ไขข้อ 3: บีบความสูงรูปกราฟลงเล็กน้อยเพื่อความปลอดภัยบนหน้าจอมือถือ (max-width จาก 680 เป็น 650)
+                chartImgHtml = `<img src="${imgData}" style="width:100%; max-width:650px; height:auto; display:block; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 4px;">`;
             }
 
-            const logoHtml = `<img src="logo.svg" style="height: 38px; width: auto; display: block;" alt="Asia Plus Securities Logo" />`;
+            const logoHtml = `<img src="logo.svg" style="height: 34px; width: auto; display: block;" alt="Asia Plus Securities Logo" />`;
 
-            // HTML โครงสร้างรายงาน PDF (ไม่ใส่ตัวเลือก Consent)
+            // แก้ไขข้อ 3: ปรับระยะ Margin/Padding ให้กะทัดรัดขึ้น บังคับความสูงคงที่สำหรับเรนเดอร์ PDF ให้พอดี 1 หน้า
             el.innerHTML = `
-                <div id="pdf-render-target" style="width: 750px; padding: 24px; font-family: 'Sarabun', sans-serif; background: #ffffff; color: #111827; box-sizing: border-box;">
+                <div id="pdf-render-target" style="width: 730px; padding: 18px 20px; font-family: 'Sarabun', sans-serif; background: #ffffff; color: #111827; box-sizing: border-box;">
                     
-                    <div style="border-bottom: 2px solid #4338ca; padding-bottom: 8px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="border-bottom: 2px solid #4338ca; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
                         <div>
-                            <h1 style="font-size:22px; margin:0 0 4px 0; color:#4338ca; font-weight: bold;">Retire Rich Planner</h1>
-                            <p style="font-size:11px; color:#64748b; margin:0;">รายงานสรุปแผนเกษียณและการลงทุนส่วนบุคคล</p>
+                            <h1 style="font-size:20px; margin:0 0 2px 0; color:#4338ca; font-weight: bold;">Retire Rich Planner</h1>
+                            <p style="font-size:10px; color:#64748b; margin:0;">รายงานสรุปแผนเกษียณและการลงทุนส่วนบุคคล</p>
                         </div>
                         <div>
                             ${logoHtml}
                         </div>
                     </div>
 
-                    <table style="width:100%; margin-bottom:12px; font-size:11px; border-collapse:collapse; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px;">
+                    <table style="width:100%; margin-bottom:8px; font-size:10px; border-collapse:collapse; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px;">
                         <tr>
-                            <td style="padding:8px 12px; border-bottom:1px solid #e2e8f0; width:50%;">
+                            <td style="padding:6px 10px; border-bottom:1px solid #e2e8f0; width:50%;">
                                 <span style="color:#64748b;">ชื่อ-นามสกุล:</span> <strong style="color:#1e293b;">${name}</strong>
                             </td>
-                            <td style="padding:8px 12px; border-bottom:1px solid #e2e8f0; width:50%;">
+                            <td style="padding:6px 10px; border-bottom:1px solid #e2e8f0; width:50%;">
                                 <span style="color:#64748b;">เบอร์โทรศัพท์:</span> <strong style="color:#1e293b;">${phone}</strong>
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding:8px 12px; border-bottom:1px solid #e2e8f0;">
+                            <td style="padding:6px 10px; border-bottom:1px solid #e2e8f0;">
                                 <span style="color:#64748b;">อายุปัจจุบัน / อายุเกษียณ:</span> <strong style="color:#1e293b;">${currentAge} ปี / ${retireAge} ปี</strong> (ออมอีก ${retireAge - currentAge} ปี)
                             </td>
-                            <td style="padding:8px 12px; border-bottom:1px solid #e2e8f0;">
+                            <td style="padding:6px 10px; border-bottom:1px solid #e2e8f0;">
                                 <span style="color:#64748b;">อายุคาดการณ์ถึง:</span> <strong style="color:#1e293b;">${endAge} ปี</strong>
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding:8px 12px;" colspan="2">
+                            <td style="padding:6px 10px;" colspan="2">
                                 <span style="color:#64748b;">ค่าใช้จ่ายหลังเกษียณ (ณ ปัจจุบัน):</span> <strong style="color:#059669;">฿${expense} บาท/เดือน</strong>
                             </td>
                         </tr>
                     </table>
 
-                    <table style="width:100%; margin-bottom:16px; font-size:11px; border-collapse:collapse; background:#ffffff; border:1px solid #e2e8f0; border-radius:8px;">
+                    <table style="width:100%; margin-bottom:10px; font-size:10px; border-collapse:collapse; background:#ffffff; border:1px solid #e2e8f0; border-radius:6px;">
                         <tr style="background:#f1f5f9;">
-                            <td style="padding:6px 12px; font-weight:bold; color:#334155;" colspan="2">สถานะการเงิน & ระดับความเสี่ยงพอร์ต</td>
+                            <td style="padding:4px 10px; font-weight:bold; color:#334155;" colspan="2">สถานะการเงิน & ระดับความเสี่ยงพอร์ต</td>
                         </tr>
                         <tr>
-                            <td style="padding:8px 12px; border-bottom:1px solid #f1f5f9; width:50%;">
+                            <td style="padding:6px 10px; border-bottom:1px solid #f1f5f9; width:50%;">
                                 <span style="color:#64748b;">เงินลงทุนตั้งต้น:</span> <strong style="color:#1e293b;">฿${initInv} บาท</strong>
                             </td>
-                            <td style="padding:8px 12px; border-bottom:1px solid #f1f5f9; width:50%;">
+                            <td style="padding:6px 10px; border-bottom:1px solid #f1f5f9; width:50%;">
                                 <span style="color:#64748b;">เงินลงทุนเพิ่มรายเดือน (DCA):</span> <strong style="color:#4f46e5;">฿${dca} บาท/เดือน</strong>
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding:8px 12px;">
+                            <td style="padding:6px 10px;">
                                 <span style="color:#64748b;">รายได้ประจำอื่นๆ หลังเกษียณ:</span> <strong style="color:#7c3aed;">฿${otherIncome} บาท/เดือน</strong>
                             </td>
-                            <td style="padding:8px 12px;">
+                            <td style="padding:6px 10px;">
                                 <span style="color:#64748b;">ระดับความเสี่ยงพอร์ตที่เลือก:</span> <strong style="color:#d97706;">${riskProfileLabel}</strong>
                             </td>
                         </tr>
                     </table>
 
-                    <h3 style="font-size:12px; color:#1e293b; margin:0 0 6px 0; font-weight: bold;">สรุปผลการประเมิน (Simulation Results)</h3>
-                    <table style="width:100%; border-collapse:separate; border-spacing:6px 0; margin-bottom:12px;">
+                    <h3 style="font-size:11px; color:#1e293b; margin:0 0 4px 0; font-weight: bold;">สรุปผลการประเมิน (Simulation Results)</h3>
+                    <table style="width:100%; border-collapse:separate; border-spacing:4px 0; margin-bottom:10px;">
                         <tr>
-                            <td style="width:33%; border:1px solid #e2e8f0; border-radius:8px; padding:10px; text-align:center; background:#f8fafc;">
-                                <div style="font-size:10px; color:#64748b; margin-bottom:2px;">โอกาสสำเร็จ</div>
-                                <div style="font-size:22px; font-weight:700; color:${appState.probSuccess >= 85 ? '#059669' : (appState.probSuccess >= 60 ? '#d97706' : '#dc2626')};">${appState.probSuccess ? appState.probSuccess.toFixed(0) : 0}%</div>
+                            <td style="width:33%; border:1px solid #e2e8f0; border-radius:6px; padding:8px; text-align:center; background:#f8fafc;">
+                                <div style="font-size:9px; color:#64748b; margin-bottom:2px;">โอกาสสำเร็จ</div>
+                                <div style="font-size:20px; font-weight:700; color:${appState.probSuccess >= 85 ? '#059669' : (appState.probSuccess >= 60 ? '#d97706' : '#dc2626')};">${appState.probSuccess ? appState.probSuccess.toFixed(0) : 0}%</div>
                             </td>
-                            <td style="width:33%; border:1px solid #e2e8f0; border-radius:8px; padding:10px; text-align:center; background:#f8fafc;">
-                                <div style="font-size:10px; color:#64748b; margin-bottom:2px;">เงินก้อนเป้าหมาย</div>
-                                <div style="font-size:18px; font-weight:700; color:#ea580c;">${appState.targetWealth ? (appState.targetWealth/1e6).toFixed(2) : 0} ล้านบาท</div>
+                            <td style="width:33%; border:1px solid #e2e8f0; border-radius:6px; padding:8px; text-align:center; background:#f8fafc;">
+                                <div style="font-size:9px; color:#64748b; margin-bottom:2px;">เงินก้อนเป้าหมาย</div>
+                                <div style="font-size:16px; font-weight:700; color:#ea580c;">${appState.targetWealth ? (appState.targetWealth/1e6).toFixed(2) : 0} ล้านบาท</div>
                             </td>
-                            <td style="width:33%; border:1px solid #e2e8f0; border-radius:8px; padding:10px; text-align:center; background:#f8fafc;">
-                                <div style="font-size:10px; color:#64748b; margin-bottom:2px;">เงินคาดการณ์ ณ วันเกษียณ</div>
-                                <div style="font-size:18px; font-weight:700; color:#047857;">${appState.projectedWealthAtRetire ? (appState.projectedWealthAtRetire/1e6).toFixed(2) : 0} ล้านบาท</div>
+                            <td style="width:33%; border:1px solid #e2e8f0; border-radius:6px; padding:8px; text-align:center; background:#f8fafc;">
+                                <div style="font-size:9px; color:#64748b; margin-bottom:2px;">เงินคาดการณ์ ณ วันเกษียณ</div>
+                                <div style="font-size:16px; font-weight:700; color:#047857;">${appState.projectedWealthAtRetire ? (appState.projectedWealthAtRetire/1e6).toFixed(2) : 0} ล้านบาท</div>
                             </td>
                         </tr>
                     </table>
 
-                    <h3 style="font-size:12px; color:#1e293b; margin:0 0 6px 0; font-weight: bold;">วิถีความมั่งคั่งตลอดชีพ (Wealth Trajectory)</h3>
-                    <div style="margin-bottom:12px; text-align:center;">
+                    <h3 style="font-size:11px; color:#1e293b; margin:0 0 4px 0; font-weight: bold;">วิถีความมั่งคั่งตลอดชีพ (Wealth Trajectory)</h3>
+                    <div style="margin-bottom:8px; text-align:center;">
                         ${chartImgHtml}
                     </div>
 
-                    <div style="border-top:1px solid #e2e8f0; padding-top:8px; font-size:8px; color:#94a3b8; line-height:1.3;">
+                    <div style="border-top:1px solid #e2e8f0; padding-top:6px; font-size:8px; color:#94a3b8; line-height:1.2;">
                         <strong>คำเตือน:</strong> ผลการจำลองการลงทุน ผลตอบแทนในอดีต หรือการประมวลผลด้วยแบบจำลอง Monte Carlo มิได้เป็นสิ่งยืนยันถึงผลตอบแทนในอนาคต เครื่องมือนี้เป็นเพียงแบบจำลองเพื่อช่วยในการวางแผนและประเมินความเป็นไปได้เบื้องต้นเท่านั้น
                     </div>
                 </div>
@@ -864,22 +910,23 @@
             try {
                 submitToGoogleSheet();
                 updateUIAndChart();
+
+                await new Promise(resolve => setTimeout(resolve, 300));
+
                 buildPdfSummary();
 
-                const pdfWrapper = document.createElement('div');
-                pdfWrapper.style.position = 'fixed';
-                pdfWrapper.style.left = '-9999px';
-                pdfWrapper.style.top = '0';
-                pdfWrapper.style.width = '750px';
-                pdfWrapper.style.backgroundColor = '#ffffff';
-                pdfWrapper.style.zIndex = '-1';
-                
-                const contentSource = document.getElementById('pdf-summary').firstElementChild;
-                const clonedContent = contentSource.cloneNode(true);
-                pdfWrapper.appendChild(clonedContent);
-                document.body.appendChild(pdfWrapper);
+                if (document.fonts && document.fonts.ready) {
+                    await document.fonts.ready;
+                }
 
-                await new Promise(resolve => setTimeout(resolve, 400));
+                const element = document.getElementById('pdf-summary');
+
+                element.style.display = 'block';
+                element.style.position = 'absolute';
+                element.style.left = '0';
+                element.style.top = '0';
+                element.style.zIndex = '9999';
+                element.style.background = '#ffffff';
 
                 const name = document.getElementById('inp-name').value.trim() || 'Plan';
 
@@ -891,7 +938,8 @@
                         scale: 2,
                         useCORS: true,
                         backgroundColor: '#ffffff',
-                        logging: false
+                        scrollX: 0,
+                        scrollY: 0
                     },
                     jsPDF: {
                         unit: 'pt',
@@ -900,8 +948,8 @@
                     }
                 };
 
-                await html2pdf().set(opt).from(clonedContent).save();
-                document.body.removeChild(pdfWrapper);
+                await html2pdf().set(opt).from(element).save();
+                element.style.display = 'none';
 
                 showToast("✅ บันทึกข้อมูลและสร้างไฟล์ PDF สำเร็จแล้ว!", "success");
 
