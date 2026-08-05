@@ -900,7 +900,7 @@
             `;
         }
 
-        async function exportToPDF() {
+async function exportToPDF() {
             const exportBtn = document.getElementById('btn-export-pdf');
             const originalBtnHtml = exportBtn.innerHTML;
 
@@ -908,25 +908,27 @@
             exportBtn.disabled = true;
 
             try {
+                // 1. ส่งข้อมูลเข้า Google Sheet ตามปกติ
                 submitToGoogleSheet();
-                updateUIAndChart();
-
-                await new Promise(resolve => setTimeout(resolve, 300));
-
+                
+                // 2. เอา updateUIAndChart() ออก ป้องกันปัญหากราฟหายตอนแคปหน้าจอ
                 buildPdfSummary();
 
-                if (document.fonts && document.fonts.ready) {
-                    await document.fonts.ready;
-                }
+                const pdfWrapper = document.createElement('div');
+                // 3. เปลี่ยน position เป็น absolute ช่วยแก้บั๊กบน iOS/Safari
+                pdfWrapper.style.position = 'absolute';
+                pdfWrapper.style.left = '-9999px';
+                pdfWrapper.style.top = '0';
+                pdfWrapper.style.width = '750px';
+                pdfWrapper.style.backgroundColor = '#ffffff';
+                
+                const contentSource = document.getElementById('pdf-summary').firstElementChild;
+                const clonedContent = contentSource.cloneNode(true);
+                pdfWrapper.appendChild(clonedContent);
+                document.body.appendChild(pdfWrapper);
 
-                const element = document.getElementById('pdf-summary');
-
-                element.style.display = 'block';
-                element.style.position = 'absolute';
-                element.style.left = '0';
-                element.style.top = '0';
-                element.style.zIndex = '9999';
-                element.style.background = '#ffffff';
+                // หน่วงเวลาเพิ่มขึ้นเล็กน้อย เพื่อให้ภาพ Canvas กราฟถูกวาดลงสมบูรณ์
+                await new Promise(resolve => setTimeout(resolve, 500)); 
 
                 const name = document.getElementById('inp-name').value.trim() || 'Plan';
 
@@ -935,11 +937,14 @@
                     filename: `Retire_Rich_Plan_${name}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: {
-                        scale: 2,
+                        scale: 2, 
                         useCORS: true,
-                        backgroundColor: '#ffffff',
+                        // 4. จุดสำคัญที่สุด: บังคับให้พิกัดการถ่ายภาพเริ่มที่ 0 เสมอ ไม่ว่าผู้ใช้จะเลื่อนจอไปตรงไหน
+                        scrollY: 0, 
                         scrollX: 0,
-                        scrollY: 0
+                        windowWidth: 750, 
+                        backgroundColor: '#ffffff',
+                        logging: false
                     },
                     jsPDF: {
                         unit: 'pt',
@@ -948,8 +953,8 @@
                     }
                 };
 
-                await html2pdf().set(opt).from(element).save();
-                element.style.display = 'none';
+                await html2pdf().set(opt).from(clonedContent).save();
+                document.body.removeChild(pdfWrapper);
 
                 showToast("✅ บันทึกข้อมูลและสร้างไฟล์ PDF สำเร็จแล้ว!", "success");
 
@@ -961,7 +966,7 @@
                 exportBtn.disabled = false;
             }
         }
-
+        
         document.addEventListener("DOMContentLoaded", () => {
             const inputs = ['inp-current-age', 'inp-retire-age', 'inp-expense', 'inp-init-inv', 'inp-dca', 'inp-other-income'];
             inputs.forEach(id => {
