@@ -742,25 +742,27 @@
         }
 
         // --- Google Sheets & Export PDF Logic ---
-        function submitToGoogleSheet() {
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbxaesT7qPIpk0XwfQ0gkfngehg-iGheURd-FaPPeZBvPW3fbFLhYLHoZtb1b_moM70Q/exec'; 
+function submitToGoogleSheet() {
+            // อย่าลืมตรวจสอบว่า scriptURL เป็นลิงก์ Web App ปัจจุบันของคุณ
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxS0IvDk9-kzjEfjqdNBZhYqa0PPtNwx-CVSRAK5c_9NE-P-V1e5bWrPryd7iE9ivsIwQ/exec'; 
 
             let riskProfileLabel = '-';
             document.querySelectorAll('input[name="riskProfile"]').forEach(r => { 
                 if(r.checked) riskProfileLabel = RISK_PROFILES[r.value].name; 
             });
 
-            // ตรวจสอบค่าความยินยอมจาก Radio Button
-            let marketingConsentVal = 'ยินยอม';
-            document.querySelectorAll('input[name="marketingConsent"]').forEach(r => {
-                if(r.checked) marketingConsentVal = r.value;
-            });
+            // 1. ดึงค่า Marketing Consent ที่ลูกค้าเลือก
+            const consentEl = document.querySelector('input[name="marketingConsent"]:checked');
+            const consentVal = consentEl ? consentEl.value : 'ไม่ระบุ';
 
             const formData = new FormData();
             formData.append('Timestamp', new Date().toLocaleString('th-TH'));
             formData.append('Name', document.getElementById('inp-name').value || 'ไม่ระบุ');
             formData.append('Phone', document.getElementById('inp-phone').value || 'ไม่ระบุ');
-            formData.append('MarketingConsent', marketingConsentVal); // ส่งค่า Consent เข้า Google Sheet
+            
+            // 2. ส่งค่า Consent พ่วงไปกับ Form
+            formData.append('MarketingConsent', consentVal); 
+            
             formData.append('CurrentAge', getNumberFromInput('inp-current-age'));
             formData.append('RetireAge', getNumberFromInput('inp-retire-age'));
             formData.append('EndAge', document.getElementById('inp-end-age').value);
