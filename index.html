@@ -138,13 +138,20 @@
                         </div>
 
                         <div class="border-t border-slate-200 pt-4 mt-2">
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-xs font-semibold text-slate-600">อัตราเงินเฟ้อคาดการณ์ (ต่อปี)</label>
+                                <span class="text-xs font-bold text-slate-800" id="val-inflation">2.5%</span>
+                            </div>
+                            <input type="range" id="inp-inflation" min="0" max="8" step="0.1" value="2.5" class="w-full">
+                        </div>
+
+                        <div class="mt-4">
                             <label class="block text-xs font-semibold text-slate-600 mb-1">ค่าใช้จ่ายต่อเดือนหลังเกษียณ (ณ ปัจจุบัน)</label>
                             <div class="relative">
                                 <span class="absolute left-3 top-2 text-slate-500">฿</span>
                                 <input type="text" id="inp-expense" value="50,000" class="w-full bg-slate-50 border border-slate-300 rounded-lg pl-8 pr-3 py-2 text-emerald-600 font-bold focus:outline-none focus:border-emerald-500 transition num-input">
                             </div>
-                            <p class="text-[10px] text-slate-500 mt-1">* ระบบจะนำไปคำนวณทบต้นด้วยเงินเฟ้ออัตโนมัติ (สมมติเงินเฟ้อ 2.5%)</p>
-                            <input type="hidden" id="inp-inflation" value="2.5">
+                            <p class="text-[10px] text-slate-500 mt-1">* ระบบจะนำไปคำนวณทบต้นด้วยเงินเฟ้อที่ระบุด้านบนโดยอัตโนมัติ</p>
                         </div>
                     </div>
                 </div>
@@ -350,6 +357,7 @@
             2: { name: 'Balance', return: 0.06, sd: 0.08, label: 'เสี่ยงกลาง' },
             3: { name: 'Aggressive', return: 0.08, sd: 0.12, label: 'เสี่ยงสูง' }
         };
+        const SIM_PATHS = 1000; // จำนวนเส้นทางจำลอง ใช้ค่าเดียวกันทั้งการ์ดหลักและตาราง What-If เพื่อให้ตัวเลขสอดคล้องกัน
 
         let chartInstance = null;
         let debounceTimer;
@@ -396,11 +404,22 @@
         }
 
         // --- Math Engine ---
+        // Box-Muller transform สร้างเลขสุ่ม Normal ทีละ "คู่" (z0, z1) แต่โค้ดเดิมคำนวณครบแต่ทิ้ง z1 ไปครึ่งหนึ่ง
+        // เก็บ z1 ไว้ใช้ในการเรียกครั้งถัดไป ลดการคำนวณ Math.random()/sqrt/log ลงครึ่งหนึ่ง (เพิ่มความเร็วให้ simulation)
+        let _spareNormal = null;
         function randomNormal(mean = 0, stdDev = 1) {
+            if (_spareNormal !== null) {
+                const z = _spareNormal;
+                _spareNormal = null;
+                return z * stdDev + mean;
+            }
             let u = 0, v = 0;
-            while(u === 0) u = Math.random(); 
+            while(u === 0) u = Math.random();
             while(v === 0) v = Math.random();
-            return (Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v)) * stdDev + mean;
+            const mag = Math.sqrt(-2.0 * Math.log(u));
+            const theta = 2.0 * Math.PI * v;
+            _spareNormal = mag * Math.sin(theta);
+            return (mag * Math.cos(theta)) * stdDev + mean;
         }
 
         // --- Validation ---
@@ -421,7 +440,9 @@
         }
 
         // --- Core Simulation Engine ---
-        function runMonteCarlo(params, numPaths = 1000) {
+        // trackTrajectory=false ข้ามการเก็บ/เรียงข้อมูลรายปีและ median ที่วันเกษียณ (ใช้กับตาราง What-If ที่อ่านแค่ probSuccess
+        // ไม่ต้องใช้กราฟ trajectory) ช่วยลดภาระการคำนวณโดยไม่กระทบความแม่นยำของ probSuccess/targetWealth เลย
+        function runMonteCarlo(params, numPaths = 1000, trackTrajectory = true) {
             const currentAge = parseInt(params.currentAge);
             const retireAge = parseInt(params.retireAge);
             const endAge = parseInt(params.endAge);
@@ -442,16 +463,39 @@
 
             // แก้ไขสมการเงินเฟ้อ: ทบต้นให้ถึงวันเกษียณ เพื่อหาเป้าหมาย
             let expAtRetire = expenseCurr * Math.pow(1 + infMonthly, retireMonth);
-            let netExpAtRetire = Math.max(0, expAtRetire - otherIncome);
-            const targetWealthLumpSum = netExpAtRetire * 12 * (endAge - retireAge); // แบบคร่าวๆ (Lump sum requirement)
+            const retireMonths = totalMonths - retireMonth; // จำนวนเดือนหลังเกษียณ
 
-            let pathsByYear = Array.from({length: (endAge - currentAge) + 1}, () => []);
+            // เงินก้อนเป้าหมาย = PV ของค่าใช้จ่ายที่โตตามเงินเฟ้อ (growing annuity)
+            // หักด้วย PV ของรายได้ประจำอื่นๆ ที่คงที่ (level annuity)
+            // ทั้งคู่คิดลดด้วยผลตอบแทนคาดหวังของพอร์ต (r) ให้สอดคล้องกับตรรกะเดียวกับที่ใช้ใน simulation loop ด้านล่าง
+            const r = expReturnMonthly;
+            const g = infMonthly;
+
+            let pvExpense;
+            if (Math.abs(r - g) < 1e-9) {
+                pvExpense = expAtRetire * retireMonths;
+            } else {
+                pvExpense = expAtRetire * (1 - Math.pow((1 + g) / (1 + r), retireMonths)) / (r - g);
+            }
+
+            let pvOtherIncome;
+            if (retireMonths <= 0) {
+                pvOtherIncome = 0;
+            } else if (Math.abs(r) < 1e-9) {
+                pvOtherIncome = otherIncome * retireMonths;
+            } else {
+                pvOtherIncome = otherIncome * (1 - Math.pow(1 + r, -retireMonths)) / r;
+            }
+
+            const targetWealthLumpSum = Math.max(0, pvExpense - pvOtherIncome);
+
+            let pathsByYear = trackTrajectory ? Array.from({length: (endAge - currentAge) + 1}, () => []) : null;
             let successfulPaths = 0;
-            let wealthAtRetirePaths = [];
+            let wealthAtRetirePaths = trackTrajectory ? [] : null;
 
             for (let p = 0; p < numPaths; p++) {
                 let wealth = initInv;
-                pathsByYear[0].push(wealth);
+                if (trackTrajectory) pathsByYear[0].push(wealth);
 
                 for (let m = 1; m <= totalMonths; m++) {
                     if (wealth > 0) {
@@ -476,7 +520,7 @@
                         }
                     }
 
-                    if (m % 12 === 0) {
+                    if (trackTrajectory && m % 12 === 0) {
                         let y = m / 12;
                         pathsByYear[y].push(wealth);
                         if (m === retireMonth) wealthAtRetirePaths.push(wealth);
@@ -486,17 +530,19 @@
             }
 
             let percentiles = [];
-            for (let y = 0; y <= (endAge - currentAge); y++) {
-                pathsByYear[y].sort((a,b) => a-b);
-                percentiles.push({
-                    worst: pathsByYear[y][Math.floor(numPaths * 0.1)] || 0,
-                    median: pathsByYear[y][Math.floor(numPaths * 0.5)] || 0,
-                    best: pathsByYear[y][Math.floor(numPaths * 0.9)] || 0
-                });
+            let medianWealthAtRetire = 0;
+            if (trackTrajectory) {
+                for (let y = 0; y <= (endAge - currentAge); y++) {
+                    pathsByYear[y].sort((a,b) => a-b);
+                    percentiles.push({
+                        worst: pathsByYear[y][Math.floor(numPaths * 0.1)] || 0,
+                        median: pathsByYear[y][Math.floor(numPaths * 0.5)] || 0,
+                        best: pathsByYear[y][Math.floor(numPaths * 0.9)] || 0
+                    });
+                }
+                wealthAtRetirePaths.sort((a,b) => a-b);
+                medianWealthAtRetire = wealthAtRetirePaths[Math.floor(numPaths * 0.5)] || 0;
             }
-
-            wealthAtRetirePaths.sort((a,b) => a-b);
-            const medianWealthAtRetire = wealthAtRetirePaths[Math.floor(numPaths * 0.5)] || 0;
 
             return {
                 probSuccess: (successfulPaths / numPaths) * 100,
@@ -533,20 +579,18 @@
             const tbody = document.getElementById("whatif-table-body");
             tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500"><i class="fa-solid fa-spinner fa-spin"></i> กำลังคำนวณ...</td></tr>`;
             
-            const fastPaths = 500; 
-            
             setTimeout(() => {
-                const baseRes = runMonteCarlo(baseParams, fastPaths);
-                const sc1Res = runMonteCarlo({...baseParams, dca: parseFloat(baseParams.dca) + 5000}, fastPaths);
-                const sc2Res = runMonteCarlo({...baseParams, dca: parseFloat(baseParams.dca) + 10000}, fastPaths);
+                const baseRes = runMonteCarlo(baseParams, SIM_PATHS, false);
+                const sc1Res = runMonteCarlo({...baseParams, dca: parseFloat(baseParams.dca) + 5000}, SIM_PATHS, false);
+                const sc2Res = runMonteCarlo({...baseParams, dca: parseFloat(baseParams.dca) + 10000}, SIM_PATHS, false);
 
                 let sc3Params = {...baseParams, retireAge: parseInt(baseParams.retireAge) + 2};
                 if (sc3Params.retireAge >= parseInt(sc3Params.endAge)) sc3Params.endAge = sc3Params.retireAge + 5;
-                const sc3Res = runMonteCarlo(sc3Params, fastPaths);
+                const sc3Res = runMonteCarlo(sc3Params, SIM_PATHS, false);
 
                 let nextRisk = parseInt(baseParams.riskLevel) + 1;
                 if (nextRisk > 3) nextRisk = 3; 
-                const sc4Res = runMonteCarlo({...baseParams, riskLevel: nextRisk}, fastPaths);
+                const sc4Res = runMonteCarlo({...baseParams, riskLevel: nextRisk}, SIM_PATHS, false);
 
                 function renderRow(title, changeText, res, isBase, actionParam, changeClass) {
                     const probClass = res.probSuccess >= 85 ? 'bg-green-100 text-green-700' : 
@@ -611,7 +655,7 @@
             document.getElementById('chart-loading').classList.remove('hidden');
             
             setTimeout(() => {
-                const res = runMonteCarlo(params, 1000);
+                const res = runMonteCarlo(params, SIM_PATHS);
                 appState = res;
                 
                 document.getElementById('out-prob-success').innerText = res.probSuccess.toFixed(0) + '%';
@@ -767,6 +811,7 @@ function submitToGoogleSheet() {
             formData.append('RetireAge', getNumberFromInput('inp-retire-age'));
             formData.append('EndAge', document.getElementById('inp-end-age').value);
             formData.append('ExpenseRetire', getNumberFromInput('inp-expense'));
+            formData.append('Inflation', getNumberFromInput('inp-inflation') + '%');
             formData.append('CurrentWealth', getNumberFromInput('inp-init-inv'));
             formData.append('MonthlyDCA', getNumberFromInput('inp-dca'));
             formData.append('OtherIncome', getNumberFromInput('inp-other-income'));
@@ -793,6 +838,7 @@ function submitToGoogleSheet() {
             const endAge = document.getElementById('inp-end-age').value;
             
             const expense = getNumberFromInput('inp-expense').toLocaleString('th-TH');
+            const inflation = getNumberFromInput('inp-inflation');
             const initInv = getNumberFromInput('inp-init-inv').toLocaleString('th-TH');
             const dca = getNumberFromInput('inp-dca').toLocaleString('th-TH');
             const otherIncome = getNumberFromInput('inp-other-income').toLocaleString('th-TH');
@@ -844,8 +890,11 @@ function submitToGoogleSheet() {
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding:6px 10px;" colspan="2">
+                            <td style="padding:6px 10px; border-bottom:1px solid #e2e8f0;">
                                 <span style="color:#64748b;">ค่าใช้จ่ายหลังเกษียณ (ณ ปัจจุบัน):</span> <strong style="color:#059669;">฿${expense} บาท/เดือน</strong>
+                            </td>
+                            <td style="padding:6px 10px; border-bottom:1px solid #e2e8f0;">
+                                <span style="color:#64748b;">อัตราเงินเฟ้อที่ใช้คำนวณ:</span> <strong style="color:#1e293b;">${inflation}% ต่อปี</strong>
                             </td>
                         </tr>
                     </table>
@@ -982,6 +1031,10 @@ async function exportToPDF() {
             const sEndAge = document.getElementById('inp-end-age');
             const lEndAge = document.getElementById('val-end-age');
             sEndAge.addEventListener('input', (e) => { lEndAge.innerText = e.target.value + ' ปี'; triggerUpdate(); });
+
+            const sInflation = document.getElementById('inp-inflation');
+            const lInflation = document.getElementById('val-inflation');
+            sInflation.addEventListener('input', (e) => { lInflation.innerText = parseFloat(e.target.value).toFixed(1) + '%'; triggerUpdate(); });
 
             const sDca = document.getElementById('slider-dca');
             const lDca = document.getElementById('val-slider-dca');
