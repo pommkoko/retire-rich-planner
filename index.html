@@ -979,43 +979,17 @@ async function exportToPDF() {
             try {
                 // 1. ส่งข้อมูลเข้า Google Sheet ตามปกติ
                 submitToGoogleSheet();
-                
+
                 // 2. เอา updateUIAndChart() ออก ป้องกันปัญหากราฟหายตอนแคปหน้าจอ
                 buildPdfSummary();
 
-                const pdfWrapper = document.createElement('div');
-                // 3. เปลี่ยน position เป็น absolute ช่วยแก้บั๊กบน iOS/Safari
-                pdfWrapper.style.position = 'absolute';
-                pdfWrapper.style.left = '-9999px';
-                pdfWrapper.style.top = '0';
-                pdfWrapper.style.width = '750px';
-                pdfWrapper.style.backgroundColor = '#ffffff';
-                
                 const contentSource = document.getElementById('pdf-summary').firstElementChild;
-                const clonedContent = contentSource.cloneNode(true);
-                pdfWrapper.appendChild(clonedContent);
-                document.body.appendChild(pdfWrapper);
-
-                // รอให้รูป (โลโก้ + กราฟ) โหลดจริงและฟอนต์พร้อม แทนการหน่วงเวลาคงที่แบบเดิม
-                // (เดิมพึ่งพา setTimeout 500ms ตายตัว ซึ่งบนเครื่อง/เน็ตที่ช้ากว่าอาจโหลดไม่ทัน)
-                await waitForRenderReady(pdfWrapper);
-                // เผื่อ 2 เฟรมให้เบราว์เซอร์ paint เนื้อหาที่เพิ่งโหลดเสร็จให้เรียบร้อยก่อนจับภาพ
-                await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-
                 const name = document.getElementById('inp-name').value.trim() || 'Plan';
 
-                // วัดขนาดจริงของเนื้อหาหลังโหลดเสร็จ แล้ว "ล็อก" ค่านี้ให้ html2canvas ใช้ตรงๆ
-                // แทนที่จะปล่อยให้มันอ้างอิงขนาดหน้าต่าง/DPR/zoom ของเครื่องผู้ใช้ ซึ่งต่างกันระหว่างมือถือกับโน้ตบุ๊ก
-                const contentWidth = clonedContent.offsetWidth || 730;
-                const contentHeight = clonedContent.offsetHeight;
-
-                // สำคัญ: กำหนดขนาดหน้ากระดาษ PDF ให้ "เท่ากับเนื้อหาจริง" แทนการใช้ A4 ตายตัว
-                // เพราะความสูงของเนื้อหาอาจต่างกันไม่กี่พิกเซลระหว่างอุปกรณ์ (ฟอนต์ไทยของแต่ละแพลตฟอร์ม
-                // render บรรทัด/ระยะห่างไม่เท่ากันเป๊ะ) ถ้าใช้ A4 ตายตัวและเนื้อหาสูงเกินพอดี จะโดนตัดขึ้นหน้า 2
-                // การให้หน้ากระดาษ "ขยับตาม" เนื้อหาที่วัดได้จริงในแต่ละครั้ง การันตีว่าอยู่หน้าเดียวเสมอทุกอุปกรณ์/ทุกรุ่นมือถือ
-                const PX_TO_PT = 0.75; // ที่ 96 CSS px ต่อ 1 นิ้ว, 1 นิ้ว = 72pt -> 1px = 0.75pt
-                const pageWidthPt = Math.max(contentWidth * PX_TO_PT, 100);
-                const pageHeightPt = Math.max(contentHeight * PX_TO_PT, 100);
+                // ความกว้างเนื้อหารู้แน่นอนตายตัวอยู่แล้ว (buildPdfSummary กำหนด width:730px ไว้เสมอ)
+                const CONTENT_WIDTH_PX = 730;
+                const PX_TO_PT = 0.75; // 96 CSS px/นิ้ว, 1 นิ้ว = 72pt -> 1px = 0.75pt
+                const pageWidthPt = CONTENT_WIDTH_PX * PX_TO_PT;
 
                 const opt = {
                     margin: 0,
@@ -1024,32 +998,52 @@ async function exportToPDF() {
                     html2canvas: {
                         scale: 2,
                         useCORS: true,
-                        // 4. จุดสำคัญที่สุด: บังคับให้พิกัดการถ่ายภาพเริ่มที่ 0 เสมอ ไม่ว่าผู้ใช้จะเลื่อนจอไปตรงไหน
                         scrollY: 0,
                         scrollX: 0,
-                        // บังคับทั้งขนาด "หน้าต่างจำลอง" และขนาด "พื้นที่จับภาพ" ให้เป็นค่าคงที่เดียวกันทุกอุปกรณ์
-                        // (ไม่พึ่งพา window.innerWidth/Height, devicePixelRatio, หรือ browser zoom ของเครื่องจริงอีกต่อไป)
                         windowWidth: 800,
-                        windowHeight: Math.max(contentHeight + 200, 1200),
-                        width: contentWidth,
-                        height: contentHeight,
-                        x: 0,
-                        y: 0,
+                        windowHeight: 2000,
                         backgroundColor: '#ffffff',
                         logging: false
                     },
                     jsPDF: {
                         unit: 'pt',
-                        // custom page size = ขนาดเนื้อหาจริง ไม่ใช้ 'a4' ตายตัวอีกต่อไป -> ไม่มีทางล้นหน้า 2 ได้เลย
-                        format: [pageWidthPt, pageHeightPt],
+                        // ความสูงเริ่มต้นเป็นค่าตั้งต้นชั่วคราว จะอัปเดตเป็นค่าจริงหลังวัด container ตัวจริงด้านล่าง
+                        format: [pageWidthPt, 2000],
                         orientation: 'portrait'
                     },
-                    // กันเหนียวอีกชั้น: ปิดการแบ่งหน้าอัตโนมัติของ html2pdf ไปเลย เพราะเราต้องการหน้าเดียวเสมอ
                     pagebreak: { mode: ['avoid-all'] }
                 };
 
-                await html2pdf().set(opt).from(clonedContent).save();
-                document.body.removeChild(pdfWrapper);
+                // สำคัญที่สุด: ใช้ API แบบแยกขั้นตอนของ html2pdf.js แทน .from().save() แบบทางลัดเดิม
+                // เพราะ html2pdf.js จะ "clone element ของเราซ้ำอีกรอบ" ใส่ container ของมันเองก่อนแคปภาพจริง
+                // (clone ที่เราสร้างเองก่อนหน้านี้ไม่ใช่ตัวที่ถูกแคป ทำให้การรอโหลดรูปที่ผ่านมาไม่มีผลกับรูปตัวจริง)
+                // ขั้นตอนนี้จะ hook เข้า container ตัวจริงของ html2pdf ก่อน แล้วค่อยรอโหลดรูป/ฟอนต์บนตัวนั้นโดยตรง
+                let worker = html2pdf().set(opt).from(contentSource);
+                worker = worker.toContainer();
+
+                worker = worker.then(function () {
+                    // `this` คือ Worker instance, `this.prop.container` คือ element ตัวจริงที่กำลังจะถูกแคป
+                    return waitForRenderReady(this.prop.container);
+                }).then(function () {
+                    // เผื่อ 2 เฟรมให้ paint เนื้อหาที่เพิ่งโหลดเสร็จให้เรียบร้อยก่อนวัดขนาด/แคปภาพ
+                    return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+                }).then(function () {
+                    // วัดความสูงจริงของ container หลังโหลดรูป/ฟอนต์ครบแล้ว แล้วปรับขนาดหน้า PDF ให้พอดีเป๊ะ
+                    const realHeightPx = this.prop.container.offsetHeight;
+                    const pageHeightPt = Math.max(realHeightPx * PX_TO_PT, 100);
+                    return this.set({ jsPDF: { unit: 'pt', format: [pageWidthPt, pageHeightPt], orientation: 'portrait' } });
+                });
+
+                worker = worker.toPdf().then(function () {
+                    // ตั้งชื่อเรื่องของไฟล์ PDF ให้ชัดเจน กัน PDF viewer บางตัวไปแสดงชื่ออื่นแทน
+                    this.prop.pdf.setProperties({
+                        title: `Retire Rich Planner - ${name}`,
+                        subject: 'รายงานสรุปแผนเกษียณและการลงทุนส่วนบุคคล',
+                        creator: 'Asia Plus Securities'
+                    });
+                });
+
+                await worker.save();
 
                 showToast("✅ บันทึกข้อมูลและสร้างไฟล์ PDF สำเร็จแล้ว!", "success");
 
