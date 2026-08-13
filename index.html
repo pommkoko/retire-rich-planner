@@ -951,6 +951,24 @@ function submitToGoogleSheet() {
             `;
         }
 
+        // --- PDF Export Helpers ---
+        // รอให้รูปภาพทั้งหมด (โลโก้, กราฟ) โหลดเสร็จจริง + ฟอนต์เว็บพร้อมใช้งานจริง แทนการเดาเวลาคงที่
+        // มี timeout กันไว้ไม่ให้ค้างตลอดไปถ้ารูปใดโหลดไม่สำเร็จ (เช่น โลโก้หาย)
+        function waitForRenderReady(container, timeoutMs = 4000) {
+            const imgs = Array.from(container.querySelectorAll('img'));
+            const imgPromises = imgs.map(img => {
+                if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+                return new Promise(resolve => {
+                    img.addEventListener('load', resolve, { once: true });
+                    img.addEventListener('error', resolve, { once: true });
+                });
+            });
+            const fontsPromise = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+            const allReady = Promise.all([fontsPromise, ...imgPromises]);
+            const timeout = new Promise(resolve => setTimeout(resolve, timeoutMs));
+            return Promise.race([allReady, timeout]);
+        }
+
 async function exportToPDF() {
             const exportBtn = document.getElementById('btn-export-pdf');
             const originalBtnHtml = exportBtn.innerHTML;
@@ -978,22 +996,37 @@ async function exportToPDF() {
                 pdfWrapper.appendChild(clonedContent);
                 document.body.appendChild(pdfWrapper);
 
-                // หน่วงเวลาเพิ่มขึ้นเล็กน้อย เพื่อให้ภาพ Canvas กราฟถูกวาดลงสมบูรณ์
-                await new Promise(resolve => setTimeout(resolve, 500)); 
+                // รอให้รูป (โลโก้ + กราฟ) โหลดจริงและฟอนต์พร้อม แทนการหน่วงเวลาคงที่แบบเดิม
+                // (เดิมพึ่งพา setTimeout 500ms ตายตัว ซึ่งบนเครื่อง/เน็ตที่ช้ากว่าอาจโหลดไม่ทัน)
+                await waitForRenderReady(pdfWrapper);
+                // เผื่อ 2 เฟรมให้เบราว์เซอร์ paint เนื้อหาที่เพิ่งโหลดเสร็จให้เรียบร้อยก่อนจับภาพ
+                await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
                 const name = document.getElementById('inp-name').value.trim() || 'Plan';
+
+                // วัดขนาดจริงของเนื้อหาหลังโหลดเสร็จ แล้ว "ล็อก" ค่านี้ให้ html2canvas ใช้ตรงๆ
+                // แทนที่จะปล่อยให้มันอ้างอิงขนาดหน้าต่าง/DPR/zoom ของเครื่องผู้ใช้ ซึ่งต่างกันระหว่างมือถือกับโน้ตบุ๊ก
+                const contentWidth = clonedContent.offsetWidth || 730;
+                const contentHeight = clonedContent.offsetHeight;
 
                 const opt = {
                     margin: 0,
                     filename: `Retire_Rich_Plan_${name}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: {
-                        scale: 2, 
+                        scale: 2,
                         useCORS: true,
                         // 4. จุดสำคัญที่สุด: บังคับให้พิกัดการถ่ายภาพเริ่มที่ 0 เสมอ ไม่ว่าผู้ใช้จะเลื่อนจอไปตรงไหน
-                        scrollY: 0, 
+                        scrollY: 0,
                         scrollX: 0,
-                        windowWidth: 750, 
+                        // บังคับทั้งขนาด "หน้าต่างจำลอง" และขนาด "พื้นที่จับภาพ" ให้เป็นค่าคงที่เดียวกันทุกอุปกรณ์
+                        // (ไม่พึ่งพา window.innerWidth/Height, devicePixelRatio, หรือ browser zoom ของเครื่องจริงอีกต่อไป)
+                        windowWidth: 800,
+                        windowHeight: Math.max(contentHeight + 200, 1200),
+                        width: contentWidth,
+                        height: contentHeight,
+                        x: 0,
+                        y: 0,
                         backgroundColor: '#ffffff',
                         logging: false
                     },
