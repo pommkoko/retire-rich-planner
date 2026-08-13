@@ -988,10 +988,13 @@ async function exportToPDF() {
 
                 // ความกว้างเนื้อหารู้แน่นอนตายตัวอยู่แล้ว (buildPdfSummary กำหนด width:730px ไว้เสมอ)
                 const CONTENT_WIDTH_PX = 730;
-                // สำคัญ: ใช้หน่วย 'px' ตลอดทั้งระบบ (ทั้งฝั่ง jsPDF และ html2canvas) แทน 'pt'
-                // เพราะพิสูจน์แล้วด้วยการทดลองจริงว่าตอนใช้หน่วย 'pt' ร่วมกับ container ที่ html2pdf.js
-                // สร้างขึ้นเอง (กำหนด width เป็น CSS pt) การคำนวณ bounding box ภายใน iframe ที่ html2canvas
-                // โคลนขึ้นมาคลาดเคลื่อน ทำให้เนื้อหาถูกจับภาพมาแค่ ~33% ของความกว้างจริง หน่วย px ตัดปัญหานี้ทิ้งไปเลย
+                // สำคัญมาก: จากการทดสอบจริงพบว่า jsPDF มีบั๊กเฉพาะตอนใช้ unit:'px' ร่วมกับ custom array format —
+                // ค่าที่ API รายงาน (getWidth()) ถูกต้อง แต่ไฟล์ PDF จริงที่เซฟออกมากลับถูกคูณเพิ่มอีก 4/3 เงียบๆ
+                // (พิสูจน์แล้ว: format:[730,1000] ด้วย unit:'px' ได้ไฟล์จริงขนาด 973.33 x 1333.33pt แทนที่จะเป็น 730x1000)
+                // ใช้ unit:'pt' แทนตลอด (พิสูจน์แล้วว่าค่าที่ส่งเข้าตรงกับไฟล์จริงเป๊ะ ไม่มี factor แปลกปลอม)
+                // ส่วน html2canvas ยังคงใช้หน่วย px ตามปกติ (คนละระบบหน่วยกับ jsPDF ไม่เกี่ยวข้องกัน)
+                const PX_TO_PT = 0.75; // 96 CSS px/นิ้ว, 1 นิ้ว = 72pt -> 1px = 0.75pt
+                const pageWidthPt = CONTENT_WIDTH_PX * PX_TO_PT;
 
                 const opt = {
                     margin: 0,
@@ -1011,9 +1014,9 @@ async function exportToPDF() {
                         logging: false
                     },
                     jsPDF: {
-                        unit: 'px',
+                        unit: 'pt',
                         // ความสูงเริ่มต้นเป็นค่าตั้งต้นชั่วคราว จะอัปเดตเป็นค่าจริงหลังวัด container ตัวจริงด้านล่าง
-                        format: [CONTENT_WIDTH_PX, 2000],
+                        format: [pageWidthPt, 2000],
                         orientation: 'portrait'
                     },
                     pagebreak: { mode: ['avoid-all'] }
@@ -1040,13 +1043,14 @@ async function exportToPDF() {
                         console.warn('PDF content height measured unexpectedly small:', realHeightPx, '- using fallback');
                         realHeightPx = 1200;
                     }
+                    const pageHeightPt = Math.max(realHeightPx * PX_TO_PT, 100);
                     // สำคัญ: jsPDF จะ "auto-swap" กว้าง/สูงเองเงียบๆ ถ้าค่าที่ส่งไปไม่ตรงกับ orientation ที่ระบุ
                     // (เช่นบอกว่า portrait แต่ width > height มันจะสลับให้เอง ทำให้ขนาดหน้าที่คำนวณมาอย่างดีพังได้)
                     // จึงต้องกำหนด orientation ให้ตรงกับความสัมพันธ์จริงของค่าเสมอ เพื่อไม่ให้ auto-swap มีโอกาสทำงานเลย
-                    const realOrientation = CONTENT_WIDTH_PX <= realHeightPx ? 'portrait' : 'landscape';
-                    // อัปเดตทั้ง jsPDF page size และ html2canvas capture height ให้ตรงกับค่าจริงที่วัดได้ ทั้งคู่เป็นหน่วย px เหมือนกันหมด
+                    const realOrientation = pageWidthPt <= pageHeightPt ? 'portrait' : 'landscape';
+                    // อัปเดตทั้ง jsPDF page size (หน่วย pt) และ html2canvas capture height (หน่วย px) ให้ตรงกับค่าจริงที่วัดได้
                     return this.set({
-                        jsPDF: { unit: 'px', format: [CONTENT_WIDTH_PX, realHeightPx], orientation: realOrientation },
+                        jsPDF: { unit: 'pt', format: [pageWidthPt, pageHeightPt], orientation: realOrientation },
                         html2canvas: Object.assign({}, this.opt.html2canvas, { height: realHeightPx })
                     });
                 });
