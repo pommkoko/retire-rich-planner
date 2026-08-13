@@ -1009,7 +1009,7 @@ async function exportToPDF() {
                         unit: 'pt',
                         // ความสูงเริ่มต้นเป็นค่าตั้งต้นชั่วคราว จะอัปเดตเป็นค่าจริงหลังวัด container ตัวจริงด้านล่าง
                         format: [pageWidthPt, 2000],
-                        orientation: 'portrait'
+                        orientation: pageWidthPt <= 2000 ? 'portrait' : 'landscape'
                     },
                     pagebreak: { mode: ['avoid-all'] }
                 };
@@ -1029,9 +1029,18 @@ async function exportToPDF() {
                     return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
                 }).then(function () {
                     // วัดความสูงจริงของ container หลังโหลดรูป/ฟอนต์ครบแล้ว แล้วปรับขนาดหน้า PDF ให้พอดีเป๊ะ
-                    const realHeightPx = this.prop.container.offsetHeight;
+                    let realHeightPx = this.prop.container.offsetHeight;
+                    // เซฟตี้: ถ้าวัดได้น้อยผิดปกติ (ต่ำกว่าที่รายงานจริงควรจะเป็น) แสดงว่าอาจวัดผิดจังหวะ ใช้ค่าสำรองที่ปลอดภัยแทน
+                    if (!realHeightPx || realHeightPx < 400) {
+                        console.warn('PDF content height measured unexpectedly small:', realHeightPx, '- using fallback');
+                        realHeightPx = 1200;
+                    }
                     const pageHeightPt = Math.max(realHeightPx * PX_TO_PT, 100);
-                    return this.set({ jsPDF: { unit: 'pt', format: [pageWidthPt, pageHeightPt], orientation: 'portrait' } });
+                    // สำคัญ: jsPDF จะ "auto-swap" กว้าง/สูงเองเงียบๆ ถ้าค่าที่ส่งไปไม่ตรงกับ orientation ที่ระบุ
+                    // (เช่นบอกว่า portrait แต่ width > height มันจะสลับให้เอง ทำให้ขนาดหน้าที่คำนวณมาอย่างดีพังได้)
+                    // จึงต้องกำหนด orientation ให้ตรงกับความสัมพันธ์จริงของค่าเสมอ เพื่อไม่ให้ auto-swap มีโอกาสทำงานเลย
+                    const realOrientation = pageWidthPt <= pageHeightPt ? 'portrait' : 'landscape';
+                    return this.set({ jsPDF: { unit: 'pt', format: [pageWidthPt, pageHeightPt], orientation: realOrientation } });
                 });
 
                 worker = worker.toPdf().then(function () {
