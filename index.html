@@ -1005,7 +1005,10 @@ async function exportToPDF() {
                         useCORS: true,
                         scrollY: 0,
                         scrollX: 0,
-                        windowWidth: 800,
+                        // สำคัญ: ตั้ง windowWidth ให้เท่ากับความกว้างเนื้อหาเป๊ะๆ (ไม่ใช่ค่าใหญ่กว่าแบบเดิม)
+                        // เพื่อไม่ให้มี "พื้นที่ว่างส่วนเกิน" ใน viewport จำลองที่ container (margin:auto) จะไปอยู่ตรงไหนก็ได้อย่างไม่แน่นอน
+                        // เมื่อ viewport แคบเท่าเนื้อหาพอดี container จะเต็มความกว้าง 100% เสมอ ไม่มีทางถูกเลื่อน/บีบได้อีก
+                        windowWidth: CONTENT_WIDTH_PX,
                         windowHeight: 2000,
                         // ระบุความกว้างตรงๆ แทนการปล่อยให้ html2canvas คำนวณเองจาก bounding box
                         // (จุดที่พิสูจน์แล้วว่าคลาดเคลื่อนได้) - ความสูงจะเติมให้ครบหลังวัดค่าจริงด้านล่าง
