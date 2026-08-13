@@ -1,6 +1,3 @@
-
-
-Index · HTML
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -19,7 +16,7 @@ Index · HTML
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
- 
+
         input[type=range] {
             -webkit-appearance: none;
             width: 100%;
@@ -51,10 +48,10 @@ Index · HTML
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen pb-12 relative overflow-x-hidden">
- 
+
     <!-- PDF Summary Template (Hidden, will be brought to front during export) -->
     <div id="pdf-summary" style="display:none;"></div>
- 
+
     <!-- Main Content Wrapper -->
     <div id="main-content" class="container mx-auto px-4 py-8 max-w-7xl bg-slate-50">
         
@@ -75,11 +72,11 @@ Index · HTML
                 </div>
             </div>
         </header>
- 
+
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
             
             <div class="xl:col-span-4 space-y-5">
- 
+
                 <!-- 0. ข้อมูล -->
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
                     <h2 class="text-base font-bold text-slate-700 mb-4 flex items-center gap-2">
@@ -139,7 +136,7 @@ Index · HTML
                             </div>
                             <input type="range" id="inp-end-age" min="70" max="100" value="85" class="w-full">
                         </div>
- 
+
                         <div class="border-t border-slate-200 pt-4 mt-2">
                             <div class="flex justify-between items-center mb-1">
                                 <label class="text-xs font-semibold text-slate-600">อัตราเงินเฟ้อคาดการณ์ (ต่อปี)</label>
@@ -147,7 +144,7 @@ Index · HTML
                             </div>
                             <input type="range" id="inp-inflation" min="0" max="8" step="0.1" value="2.5" class="w-full">
                         </div>
- 
+
                         <div class="mt-4">
                             <label class="block text-xs font-semibold text-slate-600 mb-1">ค่าใช้จ่ายต่อเดือนหลังเกษียณ (ณ ปัจจุบัน)</label>
                             <div class="relative">
@@ -158,7 +155,7 @@ Index · HTML
                         </div>
                     </div>
                 </div>
- 
+
                 <!-- 2. Financial Status -->
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                     <h2 class="text-base font-bold text-emerald-600 mb-4 flex items-center gap-2">
@@ -184,7 +181,7 @@ Index · HTML
                         </div>
                     </div>
                 </div>
- 
+
                 <!-- 3. Risk Profile -->
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                     <h2 class="text-base font-bold text-amber-600 mb-4 flex items-center gap-2">
@@ -202,7 +199,7 @@ Index · HTML
                                 <p class="text-[10px] text-slate-500 mt-1">เน้นตราสารหนี้เป็นหลัก ปกป้องเงินต้น (ความผันผวน 5%)</p>
                             </div>
                         </label>
- 
+
                         <label class="block relative cursor-pointer group">
                             <input type="radio" name="riskProfile" value="2" class="peer sr-only" checked>
                             <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 peer-checked:border-amber-500 peer-checked:bg-amber-50 transition-all">
@@ -213,7 +210,7 @@ Index · HTML
                                 <p class="text-[10px] text-slate-500 mt-1">กระจายตราสารหนี้และหุ้นสัดส่วนพอๆ กัน (ความผันผวน 8%)</p>
                             </div>
                         </label>
- 
+
                         <label class="block relative cursor-pointer group">
                             <input type="radio" name="riskProfile" value="3" class="peer sr-only">
                             <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 peer-checked:border-red-500 peer-checked:bg-red-50 transition-all">
@@ -227,7 +224,7 @@ Index · HTML
                     </div>
                 </div>
             </div>
- 
+
             <div class="xl:col-span-8 space-y-6">
                 
                 <!-- Goal Diagnostic Card -->
@@ -264,7 +261,7 @@ Index · HTML
                         </div>
                     </div>
                 </div>
- 
+
                 <!-- Interactive Plan Optimizer -->
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                     <h2 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
@@ -287,7 +284,7 @@ Index · HTML
                         </div>
                     </div>
                 </div>
- 
+
                 <!-- Wealth Trajectory Chart -->
                 <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm relative">
                     <div class="flex justify-between items-center mb-4">
@@ -310,7 +307,7 @@ Index · HTML
                         * กราฟแสดงการเติบโตของพอร์ตหลัก + สินทรัพย์อื่นๆ และการถอนใช้เงินหลังเกษียณ (จำกัดสเกลสูงสุดเพื่อให้มองเห็นกรณีปกติได้ชัดเจน)
                     </p>
                 </div>
- 
+
                 <!-- What-If Comparison Scenario Table -->
                 <div id="section-whatif" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm border-l-4 border-l-purple-500 mb-6">
                     <div class="flex justify-between items-center mb-4">
@@ -324,7 +321,7 @@ Index · HTML
                             <i class="fa-solid fa-rotate"></i> อัปเดตตาราง
                         </button>
                     </div>
- 
+
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs border-collapse">
                             <thead>
@@ -342,10 +339,10 @@ Index · HTML
                         </table>
                     </div>
                 </div>
- 
+
             </div>
         </div>
- 
+
         <!-- Disclaimer & Consent Footer -->
         <footer class="mt-12 pt-6 border-t border-slate-300 text-[10px] text-slate-500 leading-relaxed max-w-5xl mx-auto">
             <h5 class="font-bold text-slate-600 mb-2">คำเตือนและความยินยอมในการใช้งาน</h5>
@@ -353,7 +350,7 @@ Index · HTML
             <p><strong class="text-slate-600">ข้อตกลงเรื่องการเก็บ รวบรวม ใช้ และเปิดเผยข้อมูลส่วนบุคคลเพื่อการตลาด (PDPA & Marketing Consent):</strong> ข้อมูลที่ท่านกรอกในระบบ (เช่น อายุ เงินออม ผลตอบแทนที่คาดหวัง) อาจถูกบันทึก และนำไปวิเคราะห์ หรือจัดเก็บโดยบริษัท เพื่อพัฒนาบริการ นำเสนอสิทธิประโยชน์ ข่าวสารทางการเงิน และข้อเสนอทางการตลาดที่เหมาะสมกับเป้าหมายของท่าน บริษัทจะรักษาข้อมูลส่วนบุคคลของท่านและปฏิบัติตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (“กฎหมายคุ้มครองข้อมูลส่วนบุคคล”) อย่างเคร่งครัดโดยท่านสามารถอ่านเพิ่มเติมเพื่อเข้าใจถึงวิธีการที่บริษัทจัดการเก็บ รวบรวม ใช้ และเปิดเผยข้อมูลส่วนบุคคลและสิทธิของเจ้าของข้อมูลตามกฎหมายคุ้มครองข้อมูลส่วนบุคคลได้ที่ <a href="https://www.asiaplus.co.th/api/image?imageUrl=uploads/Privacy_Policy_customers_TH.pdf" target="_blank" class="text-indigo-600 hover:text-indigo-800 underline">[ประกาศความเป็นส่วนตัว (Privacy Notice)]</a> ของบริษัท</p>
         </footer>
     </div>
- 
+
     <script>
         const RISK_PROFILES = {
             1: { name: 'Conservative', return: 0.04, sd: 0.05, label: 'เสี่ยงต่ำ' },
@@ -361,11 +358,11 @@ Index · HTML
             3: { name: 'Aggressive', return: 0.08, sd: 0.12, label: 'เสี่ยงสูง' }
         };
         const SIM_PATHS = 1000; // จำนวนเส้นทางจำลอง ใช้ค่าเดียวกันทั้งการ์ดหลักและตาราง What-If เพื่อให้ตัวเลขสอดคล้องกัน
- 
+
         let chartInstance = null;
         let debounceTimer;
         let appState = { probSuccess: 0, targetWealth: 0, projectedWealth: 0, simData: null };
- 
+
         // --- Number Formatting Logic ---
         function formatNumberWithCommas(value) {
             if(!value) return "0";
@@ -375,14 +372,14 @@ Index · HTML
             parts[0] = parseInt(parts[0], 10).toLocaleString('th-TH');
             return parts.length > 1 ? parts.join('.') : parts[0];
         }
- 
+
         function getNumberFromInput(id) {
             let el = document.getElementById(id);
             if(!el) return 0;
             let val = el.value.replace(/,/g, '');
             return parseFloat(val) || 0;
         }
- 
+
         document.querySelectorAll('.num-input').forEach(input => {
             input.addEventListener('input', function(e) {
                 this.value = formatNumberWithCommas(this.value);
@@ -391,7 +388,7 @@ Index · HTML
                 if(this.value === '') this.value = '0';
             });
         });
- 
+
         // --- Notification Toast ---
         function showToast(msg, type = 'success') {
             const existing = document.getElementById("toast-notif");
@@ -405,7 +402,7 @@ Index · HTML
             document.body.appendChild(toast);
             setTimeout(() => { if(document.body.contains(toast)) toast.remove(); }, 3000);
         }
- 
+
         // --- Math Engine ---
         // Box-Muller transform สร้างเลขสุ่ม Normal ทีละ "คู่" (z0, z1) แต่โค้ดเดิมคำนวณครบแต่ทิ้ง z1 ไปครึ่งหนึ่ง
         // เก็บ z1 ไว้ใช้ในการเรียกครั้งถัดไป ลดการคำนวณ Math.random()/sqrt/log ลงครึ่งหนึ่ง (เพิ่มความเร็วให้ simulation)
@@ -424,7 +421,7 @@ Index · HTML
             _spareNormal = mag * Math.sin(theta);
             return (mag * Math.cos(theta)) * stdDev + mean;
         }
- 
+
         // --- Validation ---
         function validateParams(p) {
             if (p.retireAge <= p.currentAge) {
@@ -441,7 +438,7 @@ Index · HTML
             }
             return true;
         }
- 
+
         // --- Core Simulation Engine ---
         // trackTrajectory=false ข้ามการเก็บ/เรียงข้อมูลรายปีและ median ที่วันเกษียณ (ใช้กับตาราง What-If ที่อ่านแค่ probSuccess
         // ไม่ต้องใช้กราฟ trajectory) ช่วยลดภาระการคำนวณโดยไม่กระทบความแม่นยำของ probSuccess/targetWealth เลย
@@ -455,32 +452,32 @@ Index · HTML
             const dca = parseFloat(params.dca);
             const riskLevel = parseInt(params.riskLevel);
             const otherIncome = parseFloat(params.otherIncome);
- 
+
             const profile = RISK_PROFILES[riskLevel];
             const expReturnMonthly = Math.pow(1 + profile.return, 1/12) - 1;
             const sdMonthly = profile.sd / Math.sqrt(12);
             const infMonthly = Math.pow(1 + inflation, 1/12) - 1;
- 
+
             const totalMonths = (endAge - currentAge) * 12;
             const retireMonth = (retireAge - currentAge) * 12;
- 
+
             // แก้ไขสมการเงินเฟ้อ: ทบต้นให้ถึงวันเกษียณ เพื่อหาเป้าหมาย
             let expAtRetire = expenseCurr * Math.pow(1 + infMonthly, retireMonth);
             const retireMonths = totalMonths - retireMonth; // จำนวนเดือนหลังเกษียณ
- 
+
             // เงินก้อนเป้าหมาย = PV ของค่าใช้จ่ายที่โตตามเงินเฟ้อ (growing annuity)
             // หักด้วย PV ของรายได้ประจำอื่นๆ ที่คงที่ (level annuity)
             // ทั้งคู่คิดลดด้วยผลตอบแทนคาดหวังของพอร์ต (r) ให้สอดคล้องกับตรรกะเดียวกับที่ใช้ใน simulation loop ด้านล่าง
             const r = expReturnMonthly;
             const g = infMonthly;
- 
+
             let pvExpense;
             if (Math.abs(r - g) < 1e-9) {
                 pvExpense = expAtRetire * retireMonths;
             } else {
                 pvExpense = expAtRetire * (1 - Math.pow((1 + g) / (1 + r), retireMonths)) / (r - g);
             }
- 
+
             let pvOtherIncome;
             if (retireMonths <= 0) {
                 pvOtherIncome = 0;
@@ -489,24 +486,24 @@ Index · HTML
             } else {
                 pvOtherIncome = otherIncome * (1 - Math.pow(1 + r, -retireMonths)) / r;
             }
- 
+
             const targetWealthLumpSum = Math.max(0, pvExpense - pvOtherIncome);
- 
+
             let pathsByYear = trackTrajectory ? Array.from({length: (endAge - currentAge) + 1}, () => []) : null;
             let successfulPaths = 0;
             let wealthAtRetirePaths = trackTrajectory ? [] : null;
- 
+
             for (let p = 0; p < numPaths; p++) {
                 let wealth = initInv;
                 if (trackTrajectory) pathsByYear[0].push(wealth);
- 
+
                 for (let m = 1; m <= totalMonths; m++) {
                     if (wealth > 0) {
                         let z = randomNormal(0, 1);
                         let mReturn = expReturnMonthly + z * sdMonthly;
                         wealth *= (1 + mReturn);
                     }
- 
+
                     if (m <= retireMonth) {
                         wealth += dca; // สะสม
                     } else {
@@ -522,7 +519,7 @@ Index · HTML
                             wealth += Math.abs(netWd); // รายได้อื่นพอใช้ เหลือทบเข้าพอร์ต
                         }
                     }
- 
+
                     if (trackTrajectory && m % 12 === 0) {
                         let y = m / 12;
                         pathsByYear[y].push(wealth);
@@ -531,7 +528,7 @@ Index · HTML
                 }
                 if (wealth > 0) successfulPaths++;
             }
- 
+
             let percentiles = [];
             let medianWealthAtRetire = 0;
             if (trackTrajectory) {
@@ -546,7 +543,7 @@ Index · HTML
                 wealthAtRetirePaths.sort((a,b) => a-b);
                 medianWealthAtRetire = wealthAtRetirePaths[Math.floor(numPaths * 0.5)] || 0;
             }
- 
+
             return {
                 probSuccess: (successfulPaths / numPaths) * 100,
                 targetWealth: targetWealthLumpSum,
@@ -556,7 +553,7 @@ Index · HTML
                 retireIdx: retireAge - currentAge
             };
         }
- 
+
         // --- Input Getters ---
         function getUIParams() {
             let riskVal = 2;
@@ -573,12 +570,12 @@ Index · HTML
                 riskLevel: riskVal
             };
         }
- 
+
         // --- What-If Scenarios Logic ---
         function calculateWhatIfScenarios() {
             const baseParams = getUIParams();
             if(!validateParams(baseParams)) return;
- 
+
             const tbody = document.getElementById("whatif-table-body");
             tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500"><i class="fa-solid fa-spinner fa-spin"></i> กำลังคำนวณ...</td></tr>`;
             
@@ -586,15 +583,15 @@ Index · HTML
                 const baseRes = runMonteCarlo(baseParams, SIM_PATHS, false);
                 const sc1Res = runMonteCarlo({...baseParams, dca: parseFloat(baseParams.dca) + 5000}, SIM_PATHS, false);
                 const sc2Res = runMonteCarlo({...baseParams, dca: parseFloat(baseParams.dca) + 10000}, SIM_PATHS, false);
- 
+
                 let sc3Params = {...baseParams, retireAge: parseInt(baseParams.retireAge) + 2};
                 if (sc3Params.retireAge >= parseInt(sc3Params.endAge)) sc3Params.endAge = sc3Params.retireAge + 5;
                 const sc3Res = runMonteCarlo(sc3Params, SIM_PATHS, false);
- 
+
                 let nextRisk = parseInt(baseParams.riskLevel) + 1;
                 if (nextRisk > 3) nextRisk = 3; 
                 const sc4Res = runMonteCarlo({...baseParams, riskLevel: nextRisk}, SIM_PATHS, false);
- 
+
                 function renderRow(title, changeText, res, isBase, actionParam, changeClass) {
                     const probClass = res.probSuccess >= 85 ? 'bg-green-100 text-green-700' : 
                                       res.probSuccess >= 60 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700';
@@ -618,17 +615,17 @@ Index · HTML
                         </tr>
                     `;
                 }
- 
+
                 tbody.innerHTML = 
                     renderRow('แผนปัจจุบัน', '-', baseRes, true, {}, 'text-slate-500') +
                     renderRow('เพิ่มออมเงินขั้นต้น', '+5,000 บาท/เดือน', sc1Res, false, {dca: parseFloat(baseParams.dca) + 5000}, 'text-emerald-600') +
                     renderRow('เพิ่มออมเงินขั้นสูง', '+10,000 บาท/เดือน', sc2Res, false, {dca: parseFloat(baseParams.dca) + 10000}, 'text-emerald-600') +
                     renderRow('ขยายเวลาทำงาน', `เกษียณ ${sc3Params.retireAge} ปี`, sc3Res, false, {retireAge: sc3Params.retireAge}, 'text-blue-600') +
                     (baseParams.riskLevel < 3 ? renderRow('ปรับพอร์ตเสี่ยงขึ้น', `ระดับ ${nextRisk}`, sc4Res, false, {riskLevel: nextRisk}, 'text-amber-600') : '');
- 
+
             }, 50);
         }
- 
+
         window.applyScenario = function(params) {
             if (params.dca !== undefined) {
                 document.getElementById('inp-dca').value = formatNumberWithCommas(params.dca);
@@ -649,12 +646,12 @@ Index · HTML
             triggerUpdate();
             showToast("✅ อัปเดตแผนการลงทุนเรียบร้อยแล้ว!");
         }
- 
+
         // --- Core UI Update ---
         function updateUIAndChart() {
             const params = getUIParams();
             if (!validateParams(params)) return;
- 
+
             document.getElementById('chart-loading').classList.remove('hidden');
             
             setTimeout(() => {
@@ -664,12 +661,12 @@ Index · HTML
                 document.getElementById('out-prob-success').innerText = res.probSuccess.toFixed(0) + '%';
                 document.getElementById('out-target-wealth').innerText = (res.targetWealth / 1000000).toFixed(2) + ' ล้านบาท';
                 document.getElementById('out-projected-wealth').innerText = (res.projectedWealthAtRetire / 1000000).toFixed(2) + ' ล้านบาท';
- 
+
                 const card = document.getElementById('diagnostic-card');
                 const probText = document.getElementById('out-prob-success');
                 const adviceTitle = document.getElementById('advice-title');
                 const adviceText = document.getElementById('advice-text');
- 
+
                 card.className = "bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden transition-all duration-300";
                 
                 if (res.probSuccess >= 85) {
@@ -693,28 +690,28 @@ Index · HTML
                     let gap = Math.max(0, (res.targetWealth - res.projectedWealthAtRetire)/1000000).toFixed(1);
                     adviceText.innerHTML = `ตามแผนปัจจุบัน คุณจะขาดเงินก้อนตอนเกษียณราว <b>${gap} ล้านบาท</b> แนะนำให้เพิ่มเงินออม DCA หรือปรับพอร์ตให้เสี่ยงขึ้นหากรับไหว ดูทางเลือกด้านล่างครับ`;
                 }
- 
+
                 renderChart(res);
                 calculateWhatIfScenarios();
                 document.getElementById('chart-loading').classList.add('hidden');
             }, 50);
         }
- 
+
         function renderChart(res) {
             const ctx = document.getElementById('portfolioChart').getContext('2d');
             if (chartInstance) chartInstance.destroy();
- 
+
             const dBest = res.trajectory.map(d => d.best);
             const dMedian = res.trajectory.map(d => d.median);
             const dWorst = res.trajectory.map(d => d.worst);
             const dTarget = Array(res.labels.length).fill(res.targetWealth);
- 
+
             const medianAtEnd = res.trajectory[res.trajectory.length - 1].median;
             
             // แก้ไขข้อ 2: ปัดเศษขึ้นในระดับหลักล้าน ป้องกันตัวเลขทศนิยมยาวลอยขึ้นมาบนสุดของแกน Y
             const rawMax = Math.max(res.targetWealth, medianAtEnd) * 1.5;
             const yMaxCap = Math.ceil(rawMax / 1000000) * 1000000;
- 
+
             // แก้ไขข้อ 1: Plugin วาดเส้นประแกนตั้ง ณ อายุเกษียณ
             const retirementLinePlugin = {
                 id: 'retirementLine',
@@ -722,7 +719,7 @@ Index · HTML
                     if (res.retireIdx !== undefined && res.retireIdx >= 0 && chart.getDatasetMeta(0).data[res.retireIdx]) {
                         const { ctx, chartArea: { top, bottom } } = chart;
                         const xPos = chart.getDatasetMeta(0).data[res.retireIdx].x;
- 
+
                         ctx.save();
                         ctx.beginPath();
                         ctx.setLineDash([4, 4]); // กำหนดเป็นเส้นประ
@@ -731,7 +728,7 @@ Index · HTML
                         ctx.moveTo(xPos, top);
                         ctx.lineTo(xPos, bottom);
                         ctx.stroke();
- 
+
                         // เขียนข้อความกำกับเส้น
                         ctx.fillStyle = 'rgba(100, 116, 139, 0.7)';
                         ctx.font = '10px Sarabun, sans-serif';
@@ -740,7 +737,7 @@ Index · HTML
                     }
                 }
             };
- 
+
             chartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -782,26 +779,26 @@ Index · HTML
                 }
             });
         }
- 
+
         function triggerUpdate() {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(updateUIAndChart, 300);
         }
- 
+
         // --- Google Sheets & Export PDF Logic ---
 function submitToGoogleSheet() {
             // อย่าลืมตรวจสอบว่า scriptURL เป็นลิงก์ Web App ปัจจุบันของคุณ
             const scriptURL = 'https://script.google.com/macros/s/AKfycbxS0IvDk9-kzjEfjqdNBZhYqa0PPtNwx-CVSRAK5c_9NE-P-V1e5bWrPryd7iE9ivsIwQ/exec'; 
- 
+
             let riskProfileLabel = '-';
             document.querySelectorAll('input[name="riskProfile"]').forEach(r => { 
                 if(r.checked) riskProfileLabel = RISK_PROFILES[r.value].name; 
             });
- 
+
             // 1. ดึงค่า Marketing Consent ที่ลูกค้าเลือก
             const consentEl = document.querySelector('input[name="marketingConsent"]:checked');
             const consentVal = consentEl ? consentEl.value : 'ไม่ระบุ';
- 
+
             const formData = new FormData();
             formData.append('Timestamp', new Date().toLocaleString('th-TH'));
             formData.append('Name', document.getElementById('inp-name').value || 'ไม่ระบุ');
@@ -822,7 +819,7 @@ function submitToGoogleSheet() {
             formData.append('ProbSuccess', appState.probSuccess ? appState.probSuccess.toFixed(2) + '%' : '0%');
             formData.append('TargetWealth', appState.targetWealth ? appState.targetWealth.toFixed(2) : 0);
             formData.append('ProjectedWealth', appState.projectedWealthAtRetire ? appState.projectedWealthAtRetire.toFixed(2) : 0);
- 
+
             fetch(scriptURL, { 
                 method: 'POST', 
                 mode: 'no-cors',
@@ -831,7 +828,7 @@ function submitToGoogleSheet() {
             .then(() => console.log('บันทึก Lead สำเร็จ'))
             .catch(error => console.error('บันทึก Lead ผิดพลาด:', error));
         }
- 
+
         function buildPdfSummary() {
             const el = document.getElementById('pdf-summary');
             const name = document.getElementById('inp-name').value || '-';
@@ -850,7 +847,7 @@ function submitToGoogleSheet() {
             document.querySelectorAll('input[name="riskProfile"]').forEach(r => { 
                 if(r.checked) riskProfileLabel = RISK_PROFILES[r.value].name + ' (' + RISK_PROFILES[r.value].label + ')'; 
             });
- 
+
             let chartImgHtml = '';
             const canvas = document.getElementById('portfolioChart');
             if (canvas) {
@@ -858,23 +855,23 @@ function submitToGoogleSheet() {
                 // แก้ไขข้อ 3: บีบความสูงรูปกราฟลงเล็กน้อยเพื่อความปลอดภัยบนหน้าจอมือถือ (max-width จาก 680 เป็น 650)
                 chartImgHtml = `<img src="${imgData}" style="width:100%; max-width:650px; height:auto; display:block; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 4px;">`;
             }
- 
-            const logoHtml = `<img src="logo.svg" style="height: 34px; width: auto; display: block;" alt="Asia Plus Securities Logo" />`;
- 
+
+            const logoHtml = `<img src="logo.svg" style="height: 34px; max-width: 150px; width: auto; object-fit: contain; display: block;" alt="Asia Plus Securities Logo" />`;
+
             // แก้ไขข้อ 3: ปรับระยะ Margin/Padding ให้กะทัดรัดขึ้น บังคับความสูงคงที่สำหรับเรนเดอร์ PDF ให้พอดี 1 หน้า
             el.innerHTML = `
-                <div id="pdf-render-target" style="width: 730px; padding: 18px 20px; font-family: 'Sarabun', sans-serif; background: #ffffff; color: #111827; box-sizing: border-box;">
+                <div id="pdf-render-target" style="width: 730px; padding: 18px 20px; font-family: 'Sarabun', sans-serif; background: #ffffff; color: #111827; box-sizing: border-box; overflow: hidden;">
                     
                     <div style="border-bottom: 2px solid #4338ca; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
+                        <div style="min-width: 0;">
                             <h1 style="font-size:20px; margin:0 0 2px 0; color:#4338ca; font-weight: bold;">Retire Rich Planner</h1>
                             <p style="font-size:10px; color:#64748b; margin:0;">รายงานสรุปแผนเกษียณและการลงทุนส่วนบุคคล</p>
                         </div>
-                        <div>
+                        <div style="flex-shrink: 0;">
                             ${logoHtml}
                         </div>
                     </div>
- 
+
                     <table style="width:100%; margin-bottom:8px; font-size:10px; border-collapse:collapse; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px;">
                         <tr>
                             <td style="padding:6px 10px; border-bottom:1px solid #e2e8f0; width:50%;">
@@ -901,7 +898,7 @@ function submitToGoogleSheet() {
                             </td>
                         </tr>
                     </table>
- 
+
                     <table style="width:100%; margin-bottom:10px; font-size:10px; border-collapse:collapse; background:#ffffff; border:1px solid #e2e8f0; border-radius:6px;">
                         <tr style="background:#f1f5f9;">
                             <td style="padding:4px 10px; font-weight:bold; color:#334155;" colspan="2">สถานะการเงิน & ระดับความเสี่ยงพอร์ต</td>
@@ -923,7 +920,7 @@ function submitToGoogleSheet() {
                             </td>
                         </tr>
                     </table>
- 
+
                     <h3 style="font-size:11px; color:#1e293b; margin:0 0 4px 0; font-weight: bold;">สรุปผลการประเมิน (Simulation Results)</h3>
                     <table style="width:100%; border-collapse:separate; border-spacing:4px 0; margin-bottom:10px;">
                         <tr>
@@ -941,19 +938,19 @@ function submitToGoogleSheet() {
                             </td>
                         </tr>
                     </table>
- 
+
                     <h3 style="font-size:11px; color:#1e293b; margin:0 0 4px 0; font-weight: bold;">วิถีความมั่งคั่งตลอดชีพ (Wealth Trajectory)</h3>
                     <div style="margin-bottom:8px; text-align:center;">
                         ${chartImgHtml}
                     </div>
- 
+
                     <div style="border-top:1px solid #e2e8f0; padding-top:6px; font-size:8px; color:#94a3b8; line-height:1.2;">
                         <strong>คำเตือน:</strong> ผลการจำลองการลงทุน ผลตอบแทนในอดีต หรือการประมวลผลด้วยแบบจำลอง Monte Carlo มิได้เป็นสิ่งยืนยันถึงผลตอบแทนในอนาคต เครื่องมือนี้เป็นเพียงแบบจำลองเพื่อช่วยในการวางแผนและประเมินความเป็นไปได้เบื้องต้นเท่านั้น
                     </div>
                 </div>
             `;
         }
- 
+
         // --- PDF Export Helpers ---
         // รอให้รูปภาพทั้งหมด (โลโก้, กราฟ) โหลดเสร็จจริง + ฟอนต์เว็บพร้อมใช้งานจริง แทนการเดาเวลาคงที่
         // มี timeout กันไว้ไม่ให้ค้างตลอดไปถ้ารูปใดโหลดไม่สำเร็จ (เช่น โลโก้หาย)
@@ -971,21 +968,21 @@ function submitToGoogleSheet() {
             const timeout = new Promise(resolve => setTimeout(resolve, timeoutMs));
             return Promise.race([allReady, timeout]);
         }
- 
+
 async function exportToPDF() {
             const exportBtn = document.getElementById('btn-export-pdf');
             const originalBtnHtml = exportBtn.innerHTML;
- 
+
             exportBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังสร้างและบันทึก PDF...';
             exportBtn.disabled = true;
- 
+
             try {
                 // 1. ส่งข้อมูลเข้า Google Sheet ตามปกติ
                 submitToGoogleSheet();
                 
                 // 2. เอา updateUIAndChart() ออก ป้องกันปัญหากราฟหายตอนแคปหน้าจอ
                 buildPdfSummary();
- 
+
                 const pdfWrapper = document.createElement('div');
                 // 3. เปลี่ยน position เป็น absolute ช่วยแก้บั๊กบน iOS/Safari
                 pdfWrapper.style.position = 'absolute';
@@ -998,20 +995,20 @@ async function exportToPDF() {
                 const clonedContent = contentSource.cloneNode(true);
                 pdfWrapper.appendChild(clonedContent);
                 document.body.appendChild(pdfWrapper);
- 
+
                 // รอให้รูป (โลโก้ + กราฟ) โหลดจริงและฟอนต์พร้อม แทนการหน่วงเวลาคงที่แบบเดิม
                 // (เดิมพึ่งพา setTimeout 500ms ตายตัว ซึ่งบนเครื่อง/เน็ตที่ช้ากว่าอาจโหลดไม่ทัน)
                 await waitForRenderReady(pdfWrapper);
                 // เผื่อ 2 เฟรมให้เบราว์เซอร์ paint เนื้อหาที่เพิ่งโหลดเสร็จให้เรียบร้อยก่อนจับภาพ
                 await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
- 
+
                 const name = document.getElementById('inp-name').value.trim() || 'Plan';
- 
+
                 // วัดขนาดจริงของเนื้อหาหลังโหลดเสร็จ แล้ว "ล็อก" ค่านี้ให้ html2canvas ใช้ตรงๆ
                 // แทนที่จะปล่อยให้มันอ้างอิงขนาดหน้าต่าง/DPR/zoom ของเครื่องผู้ใช้ ซึ่งต่างกันระหว่างมือถือกับโน้ตบุ๊ก
                 const contentWidth = clonedContent.offsetWidth || 730;
                 const contentHeight = clonedContent.offsetHeight;
- 
+
                 // สำคัญ: กำหนดขนาดหน้ากระดาษ PDF ให้ "เท่ากับเนื้อหาจริง" แทนการใช้ A4 ตายตัว
                 // เพราะความสูงของเนื้อหาอาจต่างกันไม่กี่พิกเซลระหว่างอุปกรณ์ (ฟอนต์ไทยของแต่ละแพลตฟอร์ม
                 // render บรรทัด/ระยะห่างไม่เท่ากันเป๊ะ) ถ้าใช้ A4 ตายตัวและเนื้อหาสูงเกินพอดี จะโดนตัดขึ้นหน้า 2
@@ -1019,7 +1016,7 @@ async function exportToPDF() {
                 const PX_TO_PT = 0.75; // ที่ 96 CSS px ต่อ 1 นิ้ว, 1 นิ้ว = 72pt -> 1px = 0.75pt
                 const pageWidthPt = Math.max(contentWidth * PX_TO_PT, 100);
                 const pageHeightPt = Math.max(contentHeight * PX_TO_PT, 100);
- 
+
                 const opt = {
                     margin: 0,
                     filename: `Retire_Rich_Plan_${name}.pdf`,
@@ -1050,12 +1047,12 @@ async function exportToPDF() {
                     // กันเหนียวอีกชั้น: ปิดการแบ่งหน้าอัตโนมัติของ html2pdf ไปเลย เพราะเราต้องการหน้าเดียวเสมอ
                     pagebreak: { mode: ['avoid-all'] }
                 };
- 
+
                 await html2pdf().set(opt).from(clonedContent).save();
                 document.body.removeChild(pdfWrapper);
- 
+
                 showToast("✅ บันทึกข้อมูลและสร้างไฟล์ PDF สำเร็จแล้ว!", "success");
- 
+
             } catch (err) {
                 console.error('PDF Export Error:', err);
                 showToast("❌ เกิดข้อผิดพลาดในการสร้าง PDF", "error");
@@ -1070,19 +1067,19 @@ async function exportToPDF() {
             inputs.forEach(id => {
                 document.getElementById(id).addEventListener('input', triggerUpdate);
             });
- 
+
             document.querySelectorAll('input[name="riskProfile"]').forEach(radio => {
                 radio.addEventListener('change', triggerUpdate);
             });
- 
+
             const sEndAge = document.getElementById('inp-end-age');
             const lEndAge = document.getElementById('val-end-age');
             sEndAge.addEventListener('input', (e) => { lEndAge.innerText = e.target.value + ' ปี'; triggerUpdate(); });
- 
+
             const sInflation = document.getElementById('inp-inflation');
             const lInflation = document.getElementById('val-inflation');
             sInflation.addEventListener('input', (e) => { lInflation.innerText = parseFloat(e.target.value).toFixed(1) + '%'; triggerUpdate(); });
- 
+
             const sDca = document.getElementById('slider-dca');
             const lDca = document.getElementById('val-slider-dca');
             const iDca = document.getElementById('inp-dca');
@@ -1097,11 +1094,11 @@ async function exportToPDF() {
                 sDca.value = num;
                 lDca.innerText = num.toLocaleString() + ' บาท/ด.';
             });
- 
+
             const sRet = document.getElementById('slider-retire');
             const lRet = document.getElementById('val-slider-retire');
             const iRet = document.getElementById('inp-retire-age');
- 
+
             sRet.addEventListener('input', (e) => {
                 lRet.innerText = e.target.value + ' ปี';
                 iRet.value = e.target.value;
@@ -1112,17 +1109,16 @@ async function exportToPDF() {
                 sRet.value = num;
                 lRet.innerText = num + ' ปี';
             });
- 
+
             sDca.value = getNumberFromInput('inp-dca');
             lDca.innerText = parseInt(sDca.value).toLocaleString() + ' บาท/ด.';
             sRet.value = getNumberFromInput('inp-retire-age');
             lRet.innerText = sRet.value + ' ปี';
- 
+
             document.getElementById('btn-export-pdf').addEventListener('click', exportToPDF);
- 
+
             updateUIAndChart();
         });
     </script>
 </body>
 </html>
-
