@@ -1034,6 +1034,19 @@ async function exportToPDF() {
 
                 worker = worker.then(function () {
                     // `this` คือ Worker instance, `this.prop.container` คือ element ตัวจริงที่กำลังจะถูกแคป
+                    //
+                    // FIX (PDF Export หน้าจอกว้าง/PC): html2pdf.js วาง container นี้ด้วย CSS ของมันเอง
+                    // (position:absolute; left:0; right:0; margin:auto) อยู่ภายใน overlay ที่ position:fixed
+                    // คลุมเต็มหน้าจอจริง ทำให้ container ถูก "จัดกึ่งกลาง" ตามความกว้างหน้าจอจริง
+                    // (เช่นจอ PC กว้าง 1900px+ container 730px จะขยับไปอยู่ที่ x ≈ 587px)
+                    // แต่ html2canvas ด้านล่างถูกสั่งให้จำลอง viewport แคบแค่ 730px (windowWidth: CONTENT_WIDTH_PX)
+                    // จึงคำนวณพื้นที่แคปภาพโดยอิงตำแหน่ง container จริงที่ขยับไปแล้ว -> พิกัดไม่ตรงกัน
+                    // ผลคือแคปได้แค่เศษเสี้ยวที่ทับซ้อนกันจริงๆ (เนื้อหาส่วนใหญ่ว่างเปล่า/ถูกตัด)
+                    // บนมือถือบั๊กนี้ไม่ค่อยแสดงเพราะความกว้างจอใกล้เคียง 730px อยู่แล้ว ระยะเลื่อนจึงน้อยมาก
+                    // แก้โดย pin container ไว้ที่ x=0 เสมอ ไม่ให้พึ่งพาการจัดกึ่งกลางตามความกว้างจอจริง
+                    this.prop.container.style.left = '0px';
+                    this.prop.container.style.right = 'auto';
+                    this.prop.container.style.margin = '0';
                     return waitForRenderReady(this.prop.container);
                 }).then(function () {
                     // เผื่อ 2 เฟรมให้ paint เนื้อหาที่เพิ่งโหลดเสร็จให้เรียบร้อยก่อนวัดขนาด/แคปภาพ
