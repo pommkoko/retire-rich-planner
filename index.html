@@ -1013,6 +1013,25 @@ async function exportToPDF() {
                         // ระบุความกว้างตรงๆ แทนการปล่อยให้ html2canvas คำนวณเองจาก bounding box
                         // (จุดที่พิสูจน์แล้วว่าคลาดเคลื่อนได้) - ความสูงจะเติมให้ครบหลังวัดค่าจริงด้านล่าง
                         width: CONTENT_WIDTH_PX,
+                        // จุดแก้ที่แท้จริง: onclone รันบนเอกสาร "clone ตัวจริง" ที่ html2canvas จะเอาไปวาด (rasterize)
+                        // เดสก์ท็อปบางเบราว์เซอร์ไม่ apply inline width:730px ในเอกสาร clone ทำให้เนื้อหายุบเหลือ ~33% แล้วชิดซ้าย
+                        // บังคับความกว้าง + box-sizing ที่นี่โดยตรง การันตีว่าเนื้อหาเต็ม 730px เสมอทุกอุปกรณ์
+                        onclone: function (clonedDoc) {
+                            const target = clonedDoc.getElementById('pdf-render-target');
+                            if (target) {
+                                target.style.width = CONTENT_WIDTH_PX + 'px';
+                                target.style.minWidth = CONTENT_WIDTH_PX + 'px';
+                                target.style.maxWidth = CONTENT_WIDTH_PX + 'px';
+                                target.style.boxSizing = 'border-box';
+                                // บังคับแถวสองคอลัมน์ (flex) ให้ยืดเต็มความกว้าง ไม่ยุบตามเนื้อหา
+                                target.querySelectorAll('*').forEach(function (el) {
+                                    const disp = clonedDoc.defaultView.getComputedStyle(el).display;
+                                    if (disp === 'flex' || disp === 'inline-flex') {
+                                        el.style.width = '100%';
+                                    }
+                                });
+                            }
+                        },
                         backgroundColor: '#ffffff',
                         logging: false
                     },
@@ -1032,21 +1051,20 @@ async function exportToPDF() {
                 let worker = html2pdf().set(opt).from(contentSource);
                 worker = worker.toContainer();
 
+                // fix #6: html2pdf.js วาง container ด้วย CSS left:0;right:0;margin:auto
+                // บนจอ PC กว้างๆ (เช่น 1900px) container 730px จะถูกจัดกึ่งกลางที่ x≈587px
+                // แต่ html2canvas ใช้ windowWidth:730 จำลอง viewport แคบ → พิกัดสองระบบไม่ตรงกัน
+                // แคปภาพได้แค่เศษเสี้ยวซ้ายสุดที่ทับซ้อนกัน → เนื้อหาเหลือแค่ ~17% ชิดซ้าย
+                // แก้: pin container ที่ x=0 ทันทีหลัง toContainer() resolve ตัดปัญหา centering ทิ้งเลย
+                worker = worker.then(function () {
+                    const c = this.prop.container;
+                    c.style.left   = '0px';
+                    c.style.right  = 'auto';
+                    c.style.margin = '0';
+                });
+
                 worker = worker.then(function () {
                     // `this` คือ Worker instance, `this.prop.container` คือ element ตัวจริงที่กำลังจะถูกแคป
-                    //
-                    // FIX (PDF Export หน้าจอกว้าง/PC): html2pdf.js วาง container นี้ด้วย CSS ของมันเอง
-                    // (position:absolute; left:0; right:0; margin:auto) อยู่ภายใน overlay ที่ position:fixed
-                    // คลุมเต็มหน้าจอจริง ทำให้ container ถูก "จัดกึ่งกลาง" ตามความกว้างหน้าจอจริง
-                    // (เช่นจอ PC กว้าง 1900px+ container 730px จะขยับไปอยู่ที่ x ≈ 587px)
-                    // แต่ html2canvas ด้านล่างถูกสั่งให้จำลอง viewport แคบแค่ 730px (windowWidth: CONTENT_WIDTH_PX)
-                    // จึงคำนวณพื้นที่แคปภาพโดยอิงตำแหน่ง container จริงที่ขยับไปแล้ว -> พิกัดไม่ตรงกัน
-                    // ผลคือแคปได้แค่เศษเสี้ยวที่ทับซ้อนกันจริงๆ (เนื้อหาส่วนใหญ่ว่างเปล่า/ถูกตัด)
-                    // บนมือถือบั๊กนี้ไม่ค่อยแสดงเพราะความกว้างจอใกล้เคียง 730px อยู่แล้ว ระยะเลื่อนจึงน้อยมาก
-                    // แก้โดย pin container ไว้ที่ x=0 เสมอ ไม่ให้พึ่งพาการจัดกึ่งกลางตามความกว้างจอจริง
-                    this.prop.container.style.left = '0px';
-                    this.prop.container.style.right = 'auto';
-                    this.prop.container.style.margin = '0';
                     return waitForRenderReady(this.prop.container);
                 }).then(function () {
                     // เผื่อ 2 เฟรมให้ paint เนื้อหาที่เพิ่งโหลดเสร็จให้เรียบร้อยก่อนวัดขนาด/แคปภาพ
