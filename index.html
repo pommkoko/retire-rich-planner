@@ -795,50 +795,34 @@ function submitToGoogleSheet() {
                 if(r.checked) riskProfileLabel = RISK_PROFILES[r.value].name; 
             });
 
-            // 1. ดึงค่า Marketing Consent ที่ลูกค้าเลือก
             const consentEl = document.querySelector('input[name="marketingConsent"]:checked');
             const consentVal = consentEl ? consentEl.value : 'ไม่ระบุ';
 
-            const leadData = {
-                Timestamp:       new Date().toLocaleString('th-TH'),
-                Name:            document.getElementById('inp-name').value || 'ไม่ระบุ',
-                Phone:           document.getElementById('inp-phone').value || 'ไม่ระบุ',
-                MarketingConsent: consentVal,
-                CurrentAge:      getNumberFromInput('inp-current-age'),
-                RetireAge:       getNumberFromInput('inp-retire-age'),
-                EndAge:          document.getElementById('inp-end-age').value,
-                ExpenseRetire:   getNumberFromInput('inp-expense'),
-                Inflation:       getNumberFromInput('inp-inflation') + '%',
-                CurrentWealth:   getNumberFromInput('inp-init-inv'),
-                MonthlyDCA:      getNumberFromInput('inp-dca'),
-                OtherIncome:     getNumberFromInput('inp-other-income'),
-                RiskProfile:     riskProfileLabel,
-                ProbSuccess:     appState.probSuccess ? appState.probSuccess.toFixed(2) + '%' : '0%',
-                TargetWealth:    appState.targetWealth ? appState.targetWealth.toFixed(2) : 0,
-                ProjectedWealth: appState.projectedWealthAtRetire ? appState.projectedWealthAtRetire.toFixed(2) : 0,
-            };
-
-            // 2. บันทึก lead ลง localStorage เสมอ ก่อนส่งออกไป Google Sheet
-            // เพื่อเป็น local backup — ถ้า sheet หายหรือ URL เปลี่ยน อย่างน้อยยังตรวจ browser ของเครื่องที่ใช้งานได้
-            // ดูได้ใน DevTools → Application → Local Storage → key: "rrp_leads"
-            try {
-                const existing = JSON.parse(localStorage.getItem('rrp_leads') || '[]');
-                existing.push(leadData);
-                // เก็บแค่ 100 รายการล่าสุด กันไม่ให้ localStorage ใหญ่เกินไป
-                if (existing.length > 100) existing.splice(0, existing.length - 100);
-                localStorage.setItem('rrp_leads', JSON.stringify(existing));
-            } catch(e) { /* localStorage เต็มหรือ blocked — ข้ามได้ */ }
-
-            // 3. ส่ง Google Sheet (mode:'no-cors' — fetch จะ resolve เสมอไม่ว่าผลจะเป็นอะไร)
             const formData = new FormData();
-            Object.entries(leadData).forEach(([k, v]) => formData.append(k, v));
+            formData.append('Timestamp', new Date().toLocaleString('th-TH'));
+            formData.append('Name', document.getElementById('inp-name').value || 'ไม่ระบุ');
+            formData.append('Phone', document.getElementById('inp-phone').value || 'ไม่ระบุ');
+            formData.append('MarketingConsent', consentVal);
+            formData.append('CurrentAge', getNumberFromInput('inp-current-age'));
+            formData.append('RetireAge', getNumberFromInput('inp-retire-age'));
+            formData.append('EndAge', document.getElementById('inp-end-age').value);
+            formData.append('ExpenseRetire', getNumberFromInput('inp-expense'));
+            formData.append('Inflation', getNumberFromInput('inp-inflation') + '%');
+            formData.append('CurrentWealth', getNumberFromInput('inp-init-inv'));
+            formData.append('MonthlyDCA', getNumberFromInput('inp-dca'));
+            formData.append('OtherIncome', getNumberFromInput('inp-other-income'));
+            formData.append('RiskProfile', riskProfileLabel);
+            formData.append('ProbSuccess', appState.probSuccess ? appState.probSuccess.toFixed(2) + '%' : '0%');
+            formData.append('TargetWealth', appState.targetWealth ? appState.targetWealth.toFixed(2) : 0);
+            formData.append('ProjectedWealth', appState.projectedWealthAtRetire ? appState.projectedWealthAtRetire.toFixed(2) : 0);
 
-            fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: formData })
-                .then(() => console.log('ส่ง Lead ไปยัง Google Sheet แล้ว (ไม่สามารถยืนยันผลได้เนื่องจาก no-cors)'))
-                .catch(error => {
-                    // เข้ามาที่นี่ได้เฉพาะกรณี network error จริงๆ (offline / DNS fail) ไม่ใช่กรณี sheet ล่ม
-                    console.error('ส่ง Lead ล้มเหลว (network error):', error);
-                });
+            fetch(scriptURL, { 
+                method: 'POST', 
+                mode: 'no-cors',
+                body: formData 
+            })
+            .then(() => console.log('บันทึก Lead สำเร็จ'))
+            .catch(error => console.error('บันทึก Lead ผิดพลาด:', error));
         }
 
         function buildPdfSummary() {
@@ -1025,25 +1009,6 @@ async function exportToPDF() {
                         // ระบุความกว้างตรงๆ แทนการปล่อยให้ html2canvas คำนวณเองจาก bounding box
                         // (จุดที่พิสูจน์แล้วว่าคลาดเคลื่อนได้) - ความสูงจะเติมให้ครบหลังวัดค่าจริงด้านล่าง
                         width: CONTENT_WIDTH_PX,
-                        // จุดแก้ที่แท้จริง: onclone รันบนเอกสาร "clone ตัวจริง" ที่ html2canvas จะเอาไปวาด (rasterize)
-                        // เดสก์ท็อปบางเบราว์เซอร์ไม่ apply inline width:730px ในเอกสาร clone ทำให้เนื้อหายุบเหลือ ~33% แล้วชิดซ้าย
-                        // บังคับความกว้าง + box-sizing ที่นี่โดยตรง การันตีว่าเนื้อหาเต็ม 730px เสมอทุกอุปกรณ์
-                        onclone: function (clonedDoc) {
-                            const target = clonedDoc.getElementById('pdf-render-target');
-                            if (target) {
-                                target.style.width = CONTENT_WIDTH_PX + 'px';
-                                target.style.minWidth = CONTENT_WIDTH_PX + 'px';
-                                target.style.maxWidth = CONTENT_WIDTH_PX + 'px';
-                                target.style.boxSizing = 'border-box';
-                                // บังคับแถวสองคอลัมน์ (flex) ให้ยืดเต็มความกว้าง ไม่ยุบตามเนื้อหา
-                                target.querySelectorAll('*').forEach(function (el) {
-                                    const disp = clonedDoc.defaultView.getComputedStyle(el).display;
-                                    if (disp === 'flex' || disp === 'inline-flex') {
-                                        el.style.width = '100%';
-                                    }
-                                });
-                            }
-                        },
                         backgroundColor: '#ffffff',
                         logging: false
                     },
